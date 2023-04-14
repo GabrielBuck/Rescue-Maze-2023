@@ -1,7 +1,8 @@
 #ifndef Motor_hpp
 #define Motor_hpp
 
-#include  /*!< Inclusão da biblioteca dos Motores */
+#include "DynamixelMotor.h"/*!< Inclusão da biblioteca dos Motores 
+                          link: "https://github.com/descampsa/ardyno/tree/master/examples"*/
 #include  /*!< Inclusão da biblioteca da MPU */
 
 /*!< Esssa classe faz o controle de 4 motores Dynamixel e uma MPU (Unidade de Medição Inercial).
