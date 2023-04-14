@@ -32,6 +32,37 @@ a = 0;
 bool
 a = 0;
 
+//Variaveis longas
+unsigned long
+a = 0;
+
+
+/*!< Declaração de todas Funcoes do Codigo main */
+
+// A Funcao contagemDeTempo() mede o intervalo de tempo entre as chamadas
+void contagemDeTempo() {
+  
+  static unsigned long tempoAnterior = 0;
+
+  // Obtém o tempo atual
+  unsigned long tempoAtual = millis();
+
+  // Calcula o tempo decorrido desde a última passagem do loop
+  unsigned long tempoDecorrido = tempoAtual - tempoAnterior;
+
+  // Atualiza o tempo anterior para o tempo atual
+  tempoAnterior = tempoAtual;
+
+  // Imprime o tempo decorrido na porta serial
+  Serial.print("Tempo decorrido: ");
+  Serial.println(tempoDecorrido);
+}
+
+
+
+
+
+
 
 /*!< Setup do Código */
 void setup(){
@@ -68,5 +99,7 @@ void setup(){
       
 */
 void loop(){
+
+  contagemDeTempo();
 
 }
