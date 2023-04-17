@@ -8,16 +8,19 @@
 //
 
 /*!< Incluindo classes  */
-#include "Sensorcor.hpp"
+#include "Cor.hpp"
+#include "Sensores.hpp"
 #include "Motor.hpp"  
 #include "Distancia.hpp" 
 #include "Mapeamento.hpp" 
 #include "Vitimas.hpp" 
 
-Vitimas vit;
+Cor cor;
+Sensores sensores;
+Vitimas vitima;
 Mapeamento mapa;
 Motor motores;
-Distancia medir;
+Distancia distancia;
 
 /*!< Declaração de todas variaveis */
 //Variaveis Inteiras
