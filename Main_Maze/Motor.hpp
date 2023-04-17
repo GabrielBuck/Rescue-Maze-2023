@@ -4,6 +4,10 @@
 #include "DynamixelMotor.h"/*!< Inclusão da biblioteca dos Motores // link: "https://github.com/descampsa/ardyno/tree/master/examples"*/
 #define CIRCUNFERENCIA_RODA 10 /*!< Define a espessura da parede (em Mm) */
 
+#include "Giroscopio.hpp"
+
+Giroscopio giro;
+
 /*!< Esssa classe faz o controle de 4 motores Dynamixel.
     Ela fornece métodos para configurar os motores e a MPU, definir suas e velocidades.
     A classe utiliza a biblioteca "ardyno" para se comunicar com os motores Dynamixel.*/
@@ -85,19 +89,23 @@ class Motor{
 
 
     /*! Funcao que gira o robo de acordo com o comando recebido*/
-    void giro(char comando){
+    void girar(char comando){
 
       switch(comando) {
         //Robo gira ate atingir o angulo desejado
+        giro.zerar_mpu(); //Zeramos nosso angulo para iniciar o giro, e tambem ao finalizar
+        
         case "D":
-          while(true){
+          while(giro.angulo_mpu() < 90) {
             mesma_potencia(200, true);
           }
+          giro.zerar_mpu();          
           break;
 
         case "E":      
-          while(true){ 
+          while(giro.angulo_mpu() > -90){ 
           mesma_potencia(-200, true);  
+          giro.zerar_mpu();
           }
           break;
       }

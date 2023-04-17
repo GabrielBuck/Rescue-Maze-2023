@@ -70,7 +70,11 @@ void contagemDeTempo() {
 /*!< Setup do Código */
 void setup(){
   
-   Serial.begin(2000000);
+  Serial.begin(2000000);
+
+  //Iniciamos tudo
+  motores.begin();
+  sensores.begin_todos();
   
 }
 

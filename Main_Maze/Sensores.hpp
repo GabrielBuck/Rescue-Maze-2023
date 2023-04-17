@@ -1,10 +1,13 @@
 #ifndef Sensores_hpp
 #define Sensores_hpp
 
-#include <Ultrasonic.h> /*!< Inclusão da biblioteca do Ultrassonico */
+#include <NewPing.h> /*!< Inclusão da biblioteca do Ultrassonico link: "https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home"*/
 #include <MPU6050.h>/*!< Inclusão da biblioteca do MPU */
 
 #define ESPESSURA_PAREDE 10 /*!< Define a espessura da parede (em Mm) */
+#define SONAR_NUM 6      // Numero de sensors.
+#define MAX_DISTANCE 200 //Distancia Maxima (em cm).
+
 
 
 class Sensores{
@@ -24,31 +27,25 @@ class Sensores{
 
     /*!< Funcao que inicializa os sensores Ultrassonicos */
     void begin_ultrassonico(){
+      
+      //Ordem dos sensores em sentido Horário !!!
+      NewPing sonar[SONAR_NUM] = { // Array de objetos do sensor.
+        NewPing(, , MAX_DISTANCE), // Pino de disparo de cada sensor, pino de eco e distância máxima para ping.
+        NewPing(, , MAX_DISTANCE),
+        NewPing(, , MAX_DISTANCE),
+        NewPing(, , MAX_DISTANCE),
+        NewPing(, , MAX_DISTANCE), 
+        NewPing(, , MAX_DISTANCE)
+      };
     }
-
 
   public:
     
     /*!< Funcao que inicializa todos Sensores */
-    void begin_sensores(){
+    void begin_todos(){
       begin_mpu();
       begin_ultrassonico();
     }
 
-    /*!< Funcao que le a inclincao em relacao ao solo com MPU*/
-    void inclinacao_mpu(){
-      static int count = 0;
-
-      float x_value = gyroscope.x_accel();
-      float z_value = gyroscope.z_accel();
-      
-      float teta = atan(x_value/z_value)*180/PI;//Formula para o angulo de inclinacao
-      
-      if(count >= 100){
-        count = 0;
-        }
-      else if(teta <= 0) count++;
-      else count = 0;
-      
 };
 #endif
