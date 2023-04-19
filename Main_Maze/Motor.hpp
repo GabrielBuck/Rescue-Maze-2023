@@ -17,7 +17,7 @@ class Motor{
   private:
 
     /*! Funcao que faz o envio das velocidade individualmente para cada motor*/
-    void potencia(int vel[4]){
+    void potencia(int vel[4], int diferenca_lateral = 0){
 
       //Filtro para valores erroneos
       for(int i=0; i<4; i++){
@@ -36,11 +36,11 @@ class Motor{
     }
 
     /*! Funcao que coloca todos motores na mesma velocidade, e realiza seus espelhamentos*/
-    void mesma_potencia(int vel, bool giro = false){
+    void mesma_potencia(int vel, , int dif_lado = 0, bool giro = false){
 
       //Caso normal da movimentacao
       if (giro = false){
-        potencia(-vel, -vel, vel, vel)
+        potencia(-(vel - dif_lado), -(vel - dif_lado), (vel + dif_lado , (vel + dif_lado) //E enviado para os motores os valores de correcao
 
       //Caso de giro
       }else if (giro = true){
@@ -111,10 +111,22 @@ class Motor{
       }
     }
 
+    /*! Funcao que "acerta" a posicao do robo*/
+    void correcao(){
+      while(giro.angulo_mpu() < dist.angulo) {
+            mesma_potencia(200, true);
+          }
+    }
+
+    /*! Funcao que volta de re quando entramos em um quadrado preto*/
+    void sair_preto(){
+      mesma_potencia(-500);
+    }
+
 
     /*! Funcao que movinte o robo para frente*/
-    void movimento(int velocidade = 600, int quadrados = 1){
-      mesma_potencia(velocidade);
+    void movimento(int velocidade = 500, int diferenca_lateral = 0, int quadrados = 1){
+      mesma_potencia(velocidade, diferenca_lateral);
     } 
 
 
