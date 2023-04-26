@@ -47,7 +47,7 @@ int main(){
         for (int i = 0; i < SIZE; i++){
             for (int j = 0; j < SIZE; j++){
                  cout << "[" << setw(2) << hex << (int)mapa[i][j] << "] ";
-                 //cout << bitset<8>(mapa[i][j]).to_string();
+                 cout << bitset<8>(mapa[i][j]).to_string();
             }
             cout << endl;
         }
@@ -62,16 +62,15 @@ void atualizacao(bool passagens[4], char cor){
 
     //Adiciona os bits das passagens
     for(int i=0; i<4; i++) {
-        mapa[x][y] |= (1 << passagens[i]);
-        mapa[x][y] = mapa[x][y] << 1;
+        mapa[x][y] |= (passagens[i] << (7-i));
     }
     //Verifica e adiciona os bits da cor
     if(cor=='w'){bit_cor[0] = false; bit_cor[1] = true;}
     else if(cor=='b'){bit_cor[0] = true; bit_cor[1] = false;}
     else if(cor=='s'){bit_cor[0] = true; bit_cor[1] = true;}
+
     for(int i=0; i<2; i++) {
-        mapa[x][y] |= (1 << bit_cor[i]);
-        mapa[x][y] = mapa[x][y] << 1;
+        mapa[x][y] |= (bit_cor[i] << (3-i));
     }
 
 }
