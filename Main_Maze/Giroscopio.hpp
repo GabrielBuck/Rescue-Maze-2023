@@ -4,6 +4,9 @@
 #include <MPU6050.h>/*!< Inclusão da biblioteca do MPU */
 #include "Sensores.hpp"
 
+#define OFFSET 0 /*!< Define o valor de correcao para MPU */
+#define DIMENSIONAL 0 /*!< Define uma constante de correcao para MPU*/
+
 Sensores sensores;
 
 /*!< .*/
@@ -11,23 +14,63 @@ Sensores sensores;
 class Giroscopio {
 
   private:
-    float angulo_z = 0;    
+
+    /*!< Todas Funcoes PRIVADAS */
+    unsigned long tempo();
+
+    float angulo_z = 0; // Angulo atual
     float setpoint = 0; // Objetivo que o PID tenta atingir
     float Kp = 1.0; // Ganho proporcional
     float Ki = 0.2; // Ganho integral
     float Kd = 0.1; // Ganho derivativo
+    static unsigned long ultima_passagem = 0; //Usada na medicao do tempo
+
+    /*!< Funcao que mede intervalo de tempo entre as chamadas*/
+    unsigned long tempo() {
+      unsigned long tempo_atual = millis();
+      unsigned long tempo_decorrido = tempo_atual - ultima_passagem;
+      ultima_passagem = tempo_atual;
+    return tempo_decorrido;
+    }
     
   public:
 
-   /*!< Funcao que zera a referencia da MPU*/
+    /*!< Todas Funcoes PUBLICAS */
+    void zerar_mpu();
+    void calibrar_offset();
+    float angulo_mpu();
+    void inclinacao_mpu();
+    float pid_angulo(float entrada);
+
+   /*!< Funcao que zera as referencia da MPU*/
     void zerar_mpu(){
+      ultima_passagem = millis();
       angulo_z = 0;
-      gyroscope.begin();
+    }
+
+    /*!< Caso tenha troca da MPU e ESSENCIAL recalibrar.
+      Guia para a calibracao: 
+      Manter o robo em uma mesa ESTAVEL,
+      sem NENHUM tipo de interferencia ate o fim da calibracao.
+      Ao fim da medicao subistituir a constante OFFSET pelo novo valor*/
+    void calibrar_offset(){
+      float offset;
+      for(int i=0; i<10000; i++){
+        offset = offset + gyroscope.z_gyro()
+      }
+      offset = offset / 10000
+      Serial.print("Offset estimado: ");
+      Serial.println(offset);
     }
     
-    /*!< Funcao que le o angulo da com MPU*/
+    
+    /*!< Funcao que le a velocidade angular Z da MPU.
+      A MPU nos retorna a velocidade angular no eixo chamado.
+      portanto para realizar a medicao do angulo multiplicamos pelo intervalo de tempo decorrido
+      entre as leituras.
+      Tambem sao corrigidos erros de OFFSET e DIMENSIONAL, inerentes da MPU*/
     float angulo_mpu(){
-      angulo_z = gyroscope.z_gyro();
+      angulo_z = angulo_z + ((gyroscope.z_gyro() - OFFSET) * DIMENSIONAL) * tempo()
       return angulo_z;
     }
     
@@ -46,7 +89,9 @@ class Giroscopio {
       else if(teta <= 0) count++;
       else count = 0;
     }
-    // A Funcao PID calcula um valor de correcao para mante o robo alinhado com base em tres 
+
+    /*A Funcao PID calcula um valor de correcao para mante o robo alinhado
+     com base em tres partes */
     float pid_angulo(float entrada) {
       
       float erro = setpoint - entrada; // Cálculo do erro

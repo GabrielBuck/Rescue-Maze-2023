@@ -41,49 +41,17 @@ unsigned long
 
 
 /*!< Declaração de todas Funcoes do Codigo main */
+void setar_quadrado(int frente, int tras);
+bool troca_quadrado(int f_atual, int t_atual); //Verifica a troca de quadrado
+float pid_completo();//Encadeia todos PIDS
+void contagemDeTempo();//Mede o intervalo de tempo entre as chamadas
 
-//Funcao usada para salvar novos valores para a troca
-void setar_quadrado(int frente, int tras){
-  quadrado_ant[2] = {frente, tras};
-}
-
-//Funcao que verifica a troca de quadrado
-bool troca_quadrado(int f_atual, int t_atual){
-  if(f_atual <= quadrado_ant[1] - 300 || t_atual >= quadrado_ant[2] + 300){
-    return true;
-  }  
-}
-
-//Funcao faz a juncao de todos PIDs calculados separadamente
-float pid_completo() {
-  float saida = (dist.pid() + giro.pid_angulo()) / 2 return saida
-}
-
-// A Funcao contagemDeTempo() mede o intervalo de tempo entre as chamadas
-void contagemDeTempo() {
-
-  static unsigned long tempoAnterior = 0;
-
-  // Obtém o tempo atual
-  unsigned long tempoAtual = millis();
-
-  // Calcula o tempo decorrido desde a última passagem do loop
-  unsigned long tempoDecorrido = tempoAtual - tempoAnterior;
-
-  // Atualiza o tempo anterior para o tempo atual
-  tempoAnterior = tempoAtual;
-
-  // Imprime o tempo decorrido na porta serial
-  Serial.print("Tempo decorrido: ");
-  Serial.println(tempoDecorrido);
-}
-
-/*!< Setup do Código */
+/*!< ******************************************** Setup do Código ****************************************************/
 void setup() {
 
   Serial.begin(2000000);
 
-  //Iniciamos tudo
+  /*!< Inicializacoes nescessarias >!*/
   motores.begin();
   sensores.begin_todos();
 }
@@ -111,37 +79,39 @@ void setup() {
                         Envia cor para o mapeamento
                     Giroscopio
                         Rampa               
-          Continua
-            
-      
-*/
+          Continua  */
+
+/*************************************************** INICIO DO LOOP **********************************************************************/
 void loop() {
+  /*!< RECEBEMOS A DECISAO >!*/
+  /*!< O CODIGO RODA DE ACORDO COM A MESMA >!*/
 
-  //PROCURA VITIMA
-  //RESGATE
-
-  /*!< Apartir daqui se executa as movimentacoes indicadas pela decisao*/
+  /*!< Caso Vitima, buscamos por vitimas no quadrado da frente >!*/
+  if(mapa.decisao() == 'V'){
+    //MEXE SERVO MOTOR
+    //OLHAMOS SERIAL
+      //CASO ENCONTRADA A VITIMA
+        //SERVO LIBERA KITS LADO DIREITO
+        //SERVO LIBERA KITS LADO ESQUERDO
+  }
   
-  //Salvamos as distancias que serao usadas para encontar as trocas de quadrado
-  setar.quadrado(dist[0], dist[3]);
-
-  //Caso de Giro para Esquerda
+  /*!< Caso de Giro >!*/
   if (mapa.decisao() == "E") {
-    motores.girar("E");
+    motores.girar("E");//Esquerda
   }
-
-  //Caso de Giro para Direita
   else if (mapa.decisao() == "D") {
-    motores.girar("D");
+    motores.girar("D");//Direita
   }
-
-  //Caso de Andar para frente
+  
+  /*!< Caso de Movimentacao para frente >!*/
   else if (mapa.decisao() == "F") {
 
-    //Enquanto robo nao trocar de quadrado ele se mantem nesta movimentacao
+    setar.quadrado(dist[0], dist[3]); //Distancias para troca sao salvas
+
+    //Enquanto nao houver troca se mantem na movimentacao
     while (troca_quadrado() == false) {
       dist.leitura();  // Mede distancias
-
+      
       if (cor.leitura() = "Preto") {  // Verifica se a cor em que estamos e preta
         motores.sair_preto();
         break;
@@ -150,9 +120,51 @@ void loop() {
       motores.movimento(500, pid_completo())  // Executa a movimentacao
       //Algum jeito de verificar a troca de quadrados
     }
-    // Apos terminar o movimento e realizada uma correcao com base no angulo
+    // Apos terminar o movimento e realizada uma correcao com base no angulo 
     motores.correcao(dist.angulo());
   }
 
   contagemDeTempo();
 }
+/*************************************************** FINAL DO LOOP ******************************************************************************/
+
+
+
+
+//Funcao que verifica a troca de quadrado
+bool troca_quadrado(int f_atual, int t_atual){
+  if(f_atual <= quadrado_ant[1] - 300 || t_atual >= quadrado_ant[2] + 300){
+    return true;
+  }  
+}
+
+//Funcao faz a juncao de todos PIDs calculados separadamente
+float pid_completo() {
+  float saida = (dist.pid() + giro.pid_angulo()) / 2 return saida
+}
+
+//Funcao usada para salvar novos valores para a troca
+void setar_quadrado(int frente, int tras){
+  quadrado_ant[2] = {frente, tras};
+}
+
+
+// A Funcao contagemDeTempo() mede o intervalo de tempo entre as chamadas
+void contagemDeTempo() {
+
+  static unsigned long tempoAnterior = 0;
+
+  // Obtém o tempo atual
+  unsigned long tempoAtual = millis();
+
+  // Calcula o tempo decorrido desde a última passagem do loop
+  unsigned long tempoDecorrido = tempoAtual - tempoAnterior;
+
+  // Atualiza o tempo anterior para o tempo atual
+  tempoAnterior = tempoAtual;
+
+  // Imprime o tempo decorrido na porta serial
+  Serial.print("Tempo decorrido: ");
+  Serial.println(tempoDecorrido);
+}
+

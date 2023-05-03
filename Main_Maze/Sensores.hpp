@@ -13,6 +13,9 @@
 class Sensores{
 
   private:
+    /*!< Todas funcoes PRIVADAS */
+    void begin_mpu();
+    void begin_ultrassonico();
 
     /*!< Funcao que inicializa a MPU */
     void begin_mpu(){
@@ -20,7 +23,7 @@ class Sensores{
       MPU6050 gyroscope;
       gyroscope.begin();           //Iniciando giroscopio. 
       gyroscope.config_filter(6);  //Setando a 5Hz filtro passa baixa.
-      gyroscope.config_gyro(3);    //Setando completos 2000°/s ecala.
+      gyroscope.config_gyro(0);    //Setando completos 200°/s ecala.
       gyroscope.config_accel(3);   //Setando 16g completos de escala.
       gyroscope.convert_value(true); //Ajuste na conversão de valor
     }
@@ -40,6 +43,9 @@ class Sensores{
     }
 
   public:
+
+    /*!< Todas Funcoes PUBLICAS */
+    void begin_todos();
     
     /*!< Funcao que inicializa todos Sensores */
     void begin_todos(){

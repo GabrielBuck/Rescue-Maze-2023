@@ -21,6 +21,13 @@ private:
 
 public:
 
+  /*!< Todas Funcoes PUBLICAS */
+  void leitura();
+  float angulo(int frente, int tras);
+  float pid();
+  float pid_esquerdo(float entrada);
+  float pid_direito(float entrada);
+
   int dist[6]; //Armazena os valores das leituras
   float angulo = 0; 
 
