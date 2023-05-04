@@ -16,8 +16,9 @@ class Sensores{
     /*!< Todas funcoes PRIVADAS */
     void begin_mpu();
     void begin_ultrassonico();
+    void begin_enconder();
 
-    /*!< Funcao que inicializa a MPU */
+    /*!< Inicializa a MPU */
     void begin_mpu(){
 
       MPU6050 gyroscope;
@@ -28,7 +29,7 @@ class Sensores{
       gyroscope.convert_value(true); //Ajuste na conversão de valor
     }
 
-    /*!< Funcao que inicializa os sensores Ultrassonicos */
+    /*!< Inicializa os sensores Ultrassonicos */
     void begin_ultrassonico(){
       
       //Ordem dos sensores em sentido Horário !!!
@@ -42,6 +43,11 @@ class Sensores{
       };
     }
 
+    /*!< Inicializa o encoder >*/
+    void begin_enconder(){
+      pinMode(pin, mode)
+    }
+
   public:
 
     /*!< Todas Funcoes PUBLICAS */
@@ -51,6 +57,7 @@ class Sensores{
     void begin_todos(){
       begin_mpu();
       begin_ultrassonico();
+      void begin_enconder();
     }
 
 };

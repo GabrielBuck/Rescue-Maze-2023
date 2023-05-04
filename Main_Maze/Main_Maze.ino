@@ -22,29 +22,34 @@ Mapeamento mapa;
 Motor motores;
 Distancia dist;
 
-/*!< Declaração de todas variaveis */
-//Variaveis Inteiras
-int
-  quadrado_ant[2];
+/*!<********************* Declaração de todas variaveis ************************/
 
-//Variaveis Float
+#define CIRCUNFERENCIA_RODA 20
+#define NUM_PASSOS 10
+
+int
+  quadrado_ant[2],
+  encoder = 0,
+  passos = 0;
+
 float
   a = 0;
 
-//Variaveis Booleanas
 bool
-  troca_quadrado = false;
+  troca_quadrado = false,
+  passo;  //Encoder
 
-//Variaveis longas
 unsigned long
-  a = 0;
+  b = 0;
 
 
-/*!< Declaração de todas Funcoes do Codigo main */
-void setar_quadrado(int frente, int tras);
-bool troca_quadrado(int f_atual, int t_atual); //Verifica a troca de quadrado
-float pid_completo();//Encadeia todos PIDS
-void contagemDeTempo();//Mede o intervalo de tempo entre as chamadas
+/*!< ***************** Prototipos das Funcoes do Codigo main *******************/
+
+void setar_quadrado(int frente, int tras);      //Parametros para troca
+bool troca_quadrado(int f_atual, int t_atual);  //Verifica a troca de quadrado, pelo encoder e distancias
+float pid_completo();                           //Encadeia todos PIDS
+void contagemDeTempo();                         //Mede o intervalo de tempo entre as chamadas
+bool troca_encoder();                           //Verifica a troca atravas do encoder
 
 /*!< ******************************************** Setup do Código ****************************************************/
 void setup() {
@@ -87,69 +92,91 @@ void loop() {
   /*!< O CODIGO RODA DE ACORDO COM A MESMA >!*/
 
   /*!< Caso Vitima, buscamos por vitimas no quadrado da frente >!*/
-  if(mapa.decisao() == 'V'){
+  if (mapa.decisao() == 'V') {
     //MEXE SERVO MOTOR
     //OLHAMOS SERIAL
-      //CASO ENCONTRADA A VITIMA
-        //SERVO LIBERA KITS LADO DIREITO
-        //SERVO LIBERA KITS LADO ESQUERDO
+    //CASO ENCONTRADA A VITIMA
+    //SERVO LIBERA KITS LADO DIREITO
+    //SERVO LIBERA KITS LADO ESQUERDO
   }
-  
-  /*!< Caso de Giro >!*/
-  if (mapa.decisao() == "E") {
-    motores.girar("E");//Esquerda
-  }
-  else if (mapa.decisao() == "D") {
-    motores.girar("D");//Direita
-  }
-  
-  /*!< Caso de Movimentacao para frente >!*/
-  else if (mapa.decisao() == "F") {
 
-    setar.quadrado(dist[0], dist[3]); //Distancias para troca sao salvas
+  /*!< Caso de Giro >!*/
+  if (mapa.decisao() == 'E') {
+    motores.girar('E');  //Esquerda
+  } else if (mapa.decisao() == 'D') {
+    motores.girar('D');  //Direita
+  }
+
+  /*!< Caso de Movimentacao para frente >!*/
+  else if (mapa.decisao() == 'F') {
+
+    setar_quadrado(dist[0], dist[3]);  //Distancias para troca sao salvas
 
     //Enquanto nao houver troca se mantem na movimentacao
     while (troca_quadrado() == false) {
       dist.leitura();  // Mede distancias
-      
-      if (cor.leitura() = "Preto") {  // Verifica se a cor em que estamos e preta
+
+      if (cor.leitura() == "Preto") {  // Verifica se a cor em que estamos e preta
         motores.sair_preto();
         break;
       }
 
-      motores.movimento(500, pid_completo())  // Executa a movimentacao
+      motores.movimento(500, pid_completo());  // Executa a movimentacao
       //Algum jeito de verificar a troca de quadrados
     }
-    // Apos terminar o movimento e realizada uma correcao com base no angulo 
+    // Apos terminar o movimento e realizada uma correcao com base no angulo
     motores.correcao(dist.angulo());
   }
 
+  //ENVIA INFORMACOES PARA O MAPA
   contagemDeTempo();
 }
 /*************************************************** FINAL DO LOOP ******************************************************************************/
 
 
 
-
-//Funcao que verifica a troca de quadrado
-bool troca_quadrado(int f_atual, int t_atual){
-  if(f_atual <= quadrado_ant[1] - 300 || t_atual >= quadrado_ant[2] + 300){
+/*************************************************** DECLARACAO DAS FUNCOES ******************************************************************************/
+//Verifica a troca de quadrado
+bool troca_quadrado(int f_atual, int t_atual) {
+  if (f_atual <= quadrado_ant[0] - 300 || t_atual >= quadrado_ant[1] + 300) {  // Troca pelas distancias
     return true;
-  }  
+  } else if (troca_encoder() == true) {  // Troca pelo Encoder
+    return true;
+  } else {  // Nao houve troca
+    return false;
+  }
 }
 
-//Funcao faz a juncao de todos PIDs calculados separadamente
+//Faz a juncao de todos PIDs calculados separadamente
 float pid_completo() {
-  float saida = (dist.pid() + giro.pid_angulo()) / 2 return saida
+  float saida = (dist.pid() + giro.pid_angulo()) / 2;
+  return saida;
 }
 
-//Funcao usada para salvar novos valores para a troca
-void setar_quadrado(int frente, int tras){
-  quadrado_ant[2] = {frente, tras};
+//Usada para salvar novos valores para a troca
+void setar_quadrado(int frente, int tras) {
+  quadrado_ant[2] = { frente, tras };
 }
 
+//Verifica a troca atravas do encoder
+bool troca_encoder() {
 
-// A Funcao contagemDeTempo() mede o intervalo de tempo entre as chamadas
+  passo = digitalRead();
+  static bool ultimo_passo = passo;
+
+  if (ultimo_passo != passo) {
+    passos++;
+    passo = ultimo_passo;
+  }
+  if (passos >= 15) {  //Checa se foram passos suficientes
+    passos = 0;
+    return true;
+  } else if {
+    return false;
+  }
+}
+
+// Mede o intervalo de tempo entre as chamadas
 void contagemDeTempo() {
 
   static unsigned long tempoAnterior = 0;
@@ -167,4 +194,3 @@ void contagemDeTempo() {
   Serial.print("Tempo decorrido: ");
   Serial.println(tempoDecorrido);
 }
-

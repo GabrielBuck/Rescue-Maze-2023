@@ -2,9 +2,6 @@
 #define Motor_hpp
 
 #include "DynamixelMotor.h"    /*!< Inclusão da biblioteca dos Motores // link: "https://github.com/descampsa/ardyno/tree/master/examples"*/
-#define CIRCUNFERENCIA_RODA 10 /*!< Define a espessura da parede (em Mm) */
-
-#include "Giroscopio.hpp"
 
 Giroscopio giro;
 
