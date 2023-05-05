@@ -131,6 +131,11 @@ private:
       mesma_potencia(-500);
     }
 
+    /*! Funcao que volta de re quando entramos em um quadrado preto*/
+    void espera_azul() {
+      parar();
+      delay(5000);
+    }
 
     /*! Funcao que movinte o robo para frente*/
     void movimento(int velocidade = 500, int diferenca_lateral = 0, int quadrados = 1) {

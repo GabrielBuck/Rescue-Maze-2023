@@ -29,15 +29,14 @@ Distancia dist;
 
 int
   quadrado_ant[2],
-  encoder = 0,
   passos = 0;
 
 float
   a = 0;
 
 bool
-  troca_quadrado = false,
-  passo;  //Encoder
+  ultimo_passo, //Encoder
+  passo;
 
 unsigned long
   b = 0;
@@ -110,7 +109,7 @@ void loop() {
   /*!< Caso de Movimentacao para frente >!*/
   else if (mapa.decisao() == 'F') {
 
-    setar_quadrado(dist[0], dist[3]);  //Distancias para troca sao salvas
+    setar_quadrado(dist[0], dist[3]);  //Parametros para a troca sao salvos
 
     //Enquanto nao houver troca se mantem na movimentacao
     while (troca_quadrado() == false) {
@@ -118,6 +117,10 @@ void loop() {
 
       if (cor.leitura() == "Preto") {  // Verifica se a cor em que estamos e preta
         motores.sair_preto();
+        break;
+      }
+      else if (cor.leitura() == "Azul") {  // Verifica se a cor em que estamos e Azul
+        motores.esperar_azul();
         break;
       }
 
@@ -153,27 +156,37 @@ float pid_completo() {
   return saida;
 }
 
-//Usada para salvar novos valores para a troca
+//Usada para salvar novos valores para a troca,
+//tanto de distancia tanto como os do encoder
 void setar_quadrado(int frente, int tras) {
   quadrado_ant[2] = { frente, tras };
+  zerar_encoder();
 }
 
-//Verifica a troca atravas do encoder
-bool troca_encoder() {
-
+//Faz a leitura e retorna os passos
+int encoder() {
   passo = digitalRead();
-  static bool ultimo_passo = passo;
-
   if (ultimo_passo != passo) {
     passos++;
     passo = ultimo_passo;
   }
-  if (passos >= 15) {  //Checa se foram passos suficientes
+  return passos;
+}
+
+//Verifica a troca atravas do encoder
+bool troca_encoder() {
+  if (encoder() >= 15) {  //Checa se foram passos suficientes
     passos = 0;
     return true;
   } else if {
     return false;
   }
+}
+
+//Zeramos a contagem de passos do encoder 
+bool zerar_encoder() {
+  ultimo_passo = passo;
+  passos = 0;
 }
 
 // Mede o intervalo de tempo entre as chamadas
