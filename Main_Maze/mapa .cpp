@@ -80,19 +80,20 @@ int main(){
 /*Atualiza os bits da posicao atual do mapa*/
 void atualizacao(bool passagens[4], char cor){
 
-    bool bit_cor[2];
+    bool bit_cor[3];
 
     //Adiciona os bits das passagens
     for(int i=0; i<4; i++) {
         mapa[x][y] |= (passagens[i] << (7-i));
     }
     //Verifica e adiciona os bits da cor
-    if(cor=='w'){bit_cor[0] = false; bit_cor[1] = true;}
-    else if(cor=='b'){bit_cor[0] = true; bit_cor[1] = false;}
-    else if(cor=='s'){bit_cor[0] = true;bit_cor[1] = true;}
+    if(cor=='w'){bit_cor[0] = false; bit_cor[1] = false; bit_cor[2] = true;}
+    else if(cor=='b'){bit_cor[0] = false; bit_cor[1] = true; bit_cor[2] = false;}
+    else if(cor=='s'){bit_cor[0] = false; bit_cor[1] = true; bit_cor[2] = false;}
+    else if(cor=='p'){bit_cor[0] = true; bit_cor[1] = false; bit_cor[2] = false;}
 
-    for(int i=0; i<2; i++) {
-        mapa[x][y] |= (bit_cor[i] << (3-i));
+    for(int i=0; i<3; i++) {
+        mapa[x][y] |= (bit_cor[i] << (2-i));
     }
 
 }
