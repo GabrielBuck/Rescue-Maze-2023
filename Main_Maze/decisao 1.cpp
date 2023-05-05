@@ -12,11 +12,11 @@ char mov;
 int ori;
 
 //Mapa
-const int SIZE = 9;
+const int SIZE = 3;
 unsigned char mapa[SIZE][SIZE] = {0};
 
 //Cordenadas do robo
-int x = 4, y = x;
+int x = 1, y = x;
 int last_x,
     last_y,
     checkpoint_x = x,
@@ -76,7 +76,8 @@ int main(){
 
 }
 
-/*Funcao que atualiza os bits da posicao atual do mapa*/
+/************************************************************************************/
+/*Atualiza os bits da posicao atual do mapa*/
 void atualizacao(bool passagens[4], char cor){
 
     bool bit_cor[2];
@@ -96,8 +97,7 @@ void atualizacao(bool passagens[4], char cor){
 
 }
 
-/*Funcao que ajusta os valores recebidos
-das passagens, de acordo com a orientacao do robo*/
+/*Ajusta os valores recebidos das passagens, de acordo com a orientacao do robo*/
 void orientacao(){
     bool aux;
     if(ori==0){}//Frente
