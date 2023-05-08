@@ -91,7 +91,7 @@ void loop() {
   /*!< O CODIGO RODA DE ACORDO COM A MESMA >!*/
 
   /*!< Caso Vitima, buscamos por vitimas no quadrado da frente >!*/
-  if (mapa.decisao() == 'V') {
+  else if (mapa.decisao() == 'V') {
     //MEXE SERVO MOTOR
     //OLHAMOS SERIAL
     //CASO ENCONTRADA A VITIMA
@@ -100,7 +100,7 @@ void loop() {
   }
 
   /*!< Caso de Giro >!*/
-  if (mapa.decisao() == 'E') {
+  else if (mapa.decisao() == 'E') {
     motores.girar('E');  //Esquerda
   } else if (mapa.decisao() == 'D') {
     motores.girar('D');  //Direita
@@ -128,7 +128,7 @@ void loop() {
       //Algum jeito de verificar a troca de quadrados
     }
     // Apos terminar o movimento e realizada uma correcao com base no angulo
-    motores.correcao(dist.angulo());
+    motores.correcao(dist.angulo(dist[1], dist[2], dist[3], dist[5]));
   }
 
   //ENVIA INFORMACOES PARA O MAPA

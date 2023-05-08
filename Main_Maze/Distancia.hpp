@@ -23,7 +23,7 @@ public:
 
   /*!< Todas Funcoes PUBLICAS */
   void leitura();
-  float angulo(int frente, int tras);
+  float angulo(int ef, int et, int df, int dt);
   float pid();
   float pid_esquerdo(float entrada);
   float pid_direito(float entrada);
@@ -48,12 +48,27 @@ public:
   }
 
   //Funcao que estima o angulo atual com base em dois valores de distancia 
-  float angulo(int frente, int tras) {
+  float angulo(int ef, int et, int df, int dt) {
+
+    //Decidimos qual lado do robo e o mais proximo para medir o angulo
+    if(ef + et <= df + dt){
+      frente = ef;
+      tras = et;
+    }else {
+      frente = df;
+      tras = dt;
+    }
 
     if (frente >= tras) { int cat_op = frente - tras }
     else{ int cat_op = frente - tras }
 
     angulo = atan(cat_op / COMPRIMENTO_ROBO) * 180 / M_PI;
+
+    //Correcao dependendo da angulacao
+    if(ef >= df){
+      angulo = angulo*-1
+    }
+
     return angulo;
   }
 
@@ -66,7 +81,8 @@ public:
   // A Funcao PID calcula um valor de correcao para mante o robo alinhado com base em tres 
   // A funcao recebe 1 valor de distancia da esquerda
   float pid_esquerdo(float entrada) {
-    
+
+    entrada = entrada % 300
     float erro = setpoint - entrada; // Cálculo do erro
     static float ultimo_erro = 0; // Armazenamento do erro da última iteração
     static float integral = 0; // Armazenamento da soma dos erros anteriores
@@ -82,6 +98,7 @@ public:
   // A funcao recebe 1 valor de distancia da direita
   float pid_direito(float entrada) {
     
+    entrada = entrada % 300
     float erro = setpoint - entrada; // Cálculo do erro
     static float ultimo_erro = 0; // Armazenamento do erro da última iteração
     static float integral = 0; // Armazenamento da soma dos erros anteriores

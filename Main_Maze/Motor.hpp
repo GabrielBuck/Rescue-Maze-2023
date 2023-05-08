@@ -1,7 +1,7 @@
 #ifndef Motor_hpp
 #define Motor_hpp
 
-#include "DynamixelMotor.h"    /*!< Inclusão da biblioteca dos Motores // link: "https://github.com/descampsa/ardyno/tree/master/examples"*/
+#include "DynamixelMotor.h" /*!< Inclusão da biblioteca dos Motores // link: "https://github.com/descampsa/ardyno/tree/master/examples"*/
 
 Giroscopio giro;
 
@@ -35,13 +35,18 @@ private:
   }
 
   /*! Funcao que coloca todos motores na mesma velocidade, e realiza seus espelhamentos*/
-  void mesma_potencia(int vel, int dif_lado = 0, bool giro = false) {
+  void mesma_potencia(int vel, int dif_lado = 0, bool giro = 'N') {
     //Caso normal da movimentacao
     if (giro == false) {
-        potencia( -(vel - dif_lado), -(vel - dif_lado), (vel + dif_lado), (vel + dif_lado) ) //E enviado para os motores os valores de correcao
-        //Caso de giro
-    } else if (giro == true) {
+      potencia(-(vel - dif_lado), -(vel - dif_lado), (vel + dif_lado), (vel + dif_lado))  //E enviado para os motores os valores de correcao
+    }
+    //Caso de giro Sentido horario
+    else if (giro == 'D') {
       potencia(vel, vel, vel, vel)
+    }
+    //Caso de giro Sentido Antio-Horario
+    else if (giro == 'E') {
+      potencia(-vel, -vel, -vel, -vel)
     }
 
   public:
@@ -105,14 +110,14 @@ private:
 
         case 'D':
           while (giro.angulo_mpu() < 90) {
-            mesma_potencia(200, true);
+            mesma_potencia(200, 'D');
           }
           giro.zerar_mpu();
           break;
 
         case 'E':
           while (giro.angulo_mpu() > -90) {
-            mesma_potencia(-200, true);
+            mesma_potencia(-200, 'E');
             giro.zerar_mpu();
           }
           break;
@@ -120,26 +125,33 @@ private:
     }
 
     /*! Funcao que "acerta" a posicao do robo*/
-    void correcao() {
-      while (giro.angulo_mpu() < dist.angulo) {
-        mesma_potencia(200, true);
+    void correcao(float dist_angulo) {
+      giro.zerar_mpu();
+      if (dist_angulo > 0) {
+        while (giro.angulo_mpu() < dist_angulo) {
+          mesma_potencia(200, 0, 'E');
+        }
+      } 
+      else if (dist_angulo < 0) {
+        while (giro.angulo_mpu() > dist_angulo) {
+          mesma_potencia(200, 0, 'D');
+        }
       }
-    }
 
-    /*! Funcao que volta de re quando entramos em um quadrado preto*/
-    void sair_preto() {
-      mesma_potencia(-500);
-    }
+      /*! Funcao que volta de re quando entramos em um quadrado preto*/
+      void sair_preto() {
+        mesma_potencia(-500);
+      }
 
-    /*! Funcao que volta de re quando entramos em um quadrado preto*/
-    void espera_azul() {
-      parar();
-      delay(5000);
-    }
+      /*! Funcao que volta de re quando entramos em um quadrado preto*/
+      void espera_azul() {
+        parar();
+        delay(5000);
+      }
 
-    /*! Funcao que movinte o robo para frente*/
-    void movimento(int velocidade = 500, int diferenca_lateral = 0, int quadrados = 1) {
-      mesma_potencia(velocidade, diferenca_lateral);
-    }
-  };
+      /*! Funcao que movinte o robo para frente*/
+      void movimento(int velocidade = 500, int diferenca_lateral = 0, int quadrados = 1) {
+        mesma_potencia(velocidade, diferenca_lateral);
+      }
+    };
 #endif

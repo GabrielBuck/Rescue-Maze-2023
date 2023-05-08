@@ -19,7 +19,6 @@ class Giroscopio {
     unsigned long tempo();
 
     float angulo_z = 0; // Angulo atual
-    float setpoint = 0; // Objetivo que o PID tenta atingir
     float Kp = 1.0; // Ganho proporcional
     float Ki = 0.2; // Ganho integral
     float Kd = 0.1; // Ganho derivativo
@@ -40,7 +39,7 @@ class Giroscopio {
     void calibrar_offset();
     float angulo_mpu();
     void inclinacao_mpu();
-    float pid_angulo(float entrada);
+    float pid_angulo(float entrada, float setpoint = 0);
 
    /*!< Funcao que zera as referencia da MPU*/
     void zerar_mpu(){
@@ -92,7 +91,7 @@ class Giroscopio {
 
     /*A Funcao PID calcula um valor de correcao para mante o robo alinhado
      com base em tres partes */
-    float pid_angulo(float entrada) {
+    float pid_angulo(float entrada, float setpoint = 0) {
       
       float erro = setpoint - entrada; // Cálculo do erro
       static float ultimo_erro = 0; // Armazenamento do erro da última iteração
