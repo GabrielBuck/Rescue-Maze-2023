@@ -15,6 +15,9 @@
 class Sensores{
 
   private:
+
+    static unsigned long ultima_passagem = 0; //Usada na medicao do tempo
+    
     /*!< Todas funcoes PRIVADAS */
     void begin_mpu();
     void begin_ultrassonico();

@@ -9,27 +9,14 @@
 
 /*!< Incluindo classes  */
 #include "Motor.hpp"
+#include "Sensores.hpp"
+#include "Operacional.hpp"
 
-Motor motores;
+Operacional op;
+// Sensores sensores;
+// Motor motores;
 
 /*!<********************* Declaração de todas variaveis ************************/
-
-#define CIRCUNFERENCIA_RODA 20
-#define NUM_PASSOS 10
-
-int
-  quadrado_ant[2],
-  passos = 0;
-
-float
-  a = 0;
-
-bool
-  ultimo_passo, //Encoder
-  passo;
-
-unsigned long
-  b = 0;
 
 
 /*!< ***************** Prototipos das Funcoes do Codigo main *******************/

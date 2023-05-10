@@ -21,32 +21,14 @@ class Motor {
 
 private:
 
-  /*! Funcao que faz o envio das velocidade individualmente para cada motor*/
-  void potencia(int vel[4]) {
-    //Filtro para valores erroneos
-    for (int i = 0; i < 4; i++) {
-      if (vel[i] > 1000) {
-        vel[i] = 1000;
-      } else if (vel[i] < -1000) {
-        vel[i] = -1000;
-      }
-    }
-    //Cada valor recebe sua respectiva velocidade
-    motore1.speed(vel[0]);
-    motore2.speed(vel[1]);
-    motord1.speed(vel[2]);
-    motord2.speed(vel[3]);
-  }
-
-
 
 public:
 
   /*! Funcao que coloca todos motores na mesma velocidade, e realiza seus espelhamentos*/
   void mesma_potencia(int vel, int dif_lado = 0) {
     //Caso normal da movimentacao
-    int buff[4] = { -(vel - dif_lado), -(vel - dif_lado), (vel + dif_lado), (vel + dif_lado) }; 
-    potencia(buff);  //E enviado para os motores os valores de correcao
+    int aux[4] = { -(vel - dif_lado), -(vel - dif_lado), (vel + dif_lado), (vel + dif_lado) };
+    potencia(aux);  //E enviado para os motores os valores de correcao
   }
 
   /*! Funcao que inicializa todas variaveis e itens nescesarrios para o funcionamento dos motores */
@@ -77,5 +59,23 @@ public:
     motord1.wheelMode();
     motord2.wheelMode();
   }
+
+  /*! Funcao que faz o envio das velocidade individualmente para cada motor*/
+  void potencia(int vel[4]) {
+    //Filtro para valores erroneos
+    for (int i = 0; i < 4; i++) {
+      if (vel[i] > 1000) {
+        vel[i] = 1000;
+      } else if (vel[i] < -1000) {
+        vel[i] = -1000;
+      }
+    }
+    //Cada valor recebe sua respectiva velocidade
+    motore1.speed(vel[0]);
+    motore2.speed(vel[1]);
+    motord1.speed(vel[2]);
+    motord2.speed(vel[3]);
+  }
+  
 };
 #endif
