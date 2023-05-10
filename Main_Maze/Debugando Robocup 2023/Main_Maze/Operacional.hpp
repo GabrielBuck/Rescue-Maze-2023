@@ -21,34 +21,34 @@ class Operacional {
 private:
 
   int
-    quadrado_ant[2],
-    passos = 0;
-
-  float
-    a = 0;
+    quadrado_ant[2];
 
   bool
     ultimo_passo,  //Encoder
     passo;
 
-  unsigned long
-    b = 0;
-
-  /*!< Todas funcoes PRIVADAS */
-
-
 public:
 
-  /*!< Todas Funcoes PUBLICAS */
+  /*! Inicializacao dos Motores e Sensores*/
+  void begin() {
+    sensores.begin_enconder();
+    sensores.begin_mpu();
+    motores.begin();
+  }
 
   /******************** DISTANCIAS **********************/
-  int Ki = 0,
-      Kp = 0,
-      Kd = 0,
-      setpoint = 80;
-
-      /*! Estima o angulo atual com base em dois valores de distancia*/
-    float angulo(int ef, int et, int df, int dt) {
+  int dist[6];
+  
+  /*! Lê as distancias dos 6 ultrassonicos*/
+  void ler_distancias(){
+    sensores.ler_dist();
+    for(int i=0; i<6; i++){
+    dist[i] = sensores.dist[i];
+    }
+  }
+  
+  /*! Estima o angulo atual com base em dois valores de distancia*/
+  float angulo(int ef, int et, int df, int dt) {
     int angulo;
     int cat_op;
     int frente;
@@ -79,50 +79,19 @@ public:
     return angulo;
   }
 
-  /* PID calcula um valor de correcao para mante o robo alinhado com base nas distancias*/
-  float pid_esquerdo(int entrada, bool zerar = false) {
-
-    entrada = entrada % 300; 
-    float erro = setpoint - entrada;  // Cálculo do erro
-    static float ultimo_erro = 0;                             // Armazenamento do erro da última iteração
-    static float integral = 0;                                // Armazenamento da soma dos erros anteriores
-
-    float proporcional = Kp * erro;                           // Cálculo do termo proporcional
-    integral += erro;                                         // Soma do erro acumulado
-    float derivativo = Kd * (erro - ultimo_erro);             // Cálculo do termo derivativo
-    ultimo_erro = erro;                                       // Armazenamento do erro atual para a próxima iteração
-    float saida = proporcional + Ki * integral + derivativo;  // Cálculo do sinal de controle
-    return saida;                                             // Retorna o sinal de controle
-  }
-
-  /*PID direito*/
-  float pid_direito(int entrada, bool zerar = false) {
-
-    entrada = entrada % 300;
-    float erro = setpoint - entrada;
-    static float ultimo_erro = 0;
-    static float integral = 0;
-
-    float proporcional = Kp * erro;
-    integral += erro;
-    float derivativo = Kd * (erro - ultimo_erro);
-    ultimo_erro = erro;
-    float saida = proporcional + Ki * integral + derivativo;
-    return saida;
-  }
-
   /******************* MOVIMENTACAO ********************/
 
-  /*! Gira o Robo */
+  /*! Girar o Robo */
   void girar(char com) {
     int aux[] = { 500, 500, 500, 500 };  // Inicia com valores de 'E'
     sensores.zerar_mpu();
 
+    //Esquerda
     if (com == 'E') {
       while (sensores.angulo_mpu() > -90) {
         motores.potencia(aux);
       }
-
+      //Direita
     } else if (com == 'D') {
       aux[0] = -500;
       aux[1] = -500;
@@ -132,7 +101,6 @@ public:
         motores.potencia(aux);
       }
     }
-
     sensores.zerar_mpu();
   }
 
@@ -140,12 +108,13 @@ public:
   void parar() {
     motores.mesma_potencia(0);
   }
+
   /*! Volta de re quando entramos em um quadrado preto*/
   void sair_preto() {
     motores.mesma_potencia(-500);
   }
 
-  /*! Espera 5seg no azul*/
+  /*! Espera 5 seg no azul*/
   void espera_azul() {
     parar();
     delay(5000);
@@ -155,5 +124,34 @@ public:
   void movimento(int velocidade = 500, int diferenca_lateral = 0, int quadrados = 1) {
     motores.mesma_potencia(velocidade, diferenca_lateral);
   }
+
+  /*! São definidos os parametros de distancia e do Encoder, para a troca*/
+  void setar_quadrado(int frente, int tras) {
+    quadrado_ant[0] = frente;
+    quadrado_ant[1] = tras;
+    sensores.zerar_encoder();
+  }
+
+  /*Um dos parametros da troca*/
+  bool troca_encoder() {
+    if (sensores.ler_encoder() >= NUM_PASSOS) {  //Checa se foram passos suficientes
+      sensores.zerar_encoder();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /* Verifica a troca de quadrado */
+  bool troca_quadrado(int f_atual, int t_atual) {
+    if (f_atual <= quadrado_ant[0] - 300 || t_atual >= quadrado_ant[1] + 300) {  // Troca pelas distancias
+      return true;
+    } else if (troca_encoder() == true) {  // Troca pelo Encoder
+      return true;
+    } else {  // Nao houve troca
+      return false;
+    }
+  }
+
 };
 #endif

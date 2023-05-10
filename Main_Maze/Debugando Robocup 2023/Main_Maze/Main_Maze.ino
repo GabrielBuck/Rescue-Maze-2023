@@ -11,30 +11,25 @@
 #include "Motor.hpp"
 #include "Sensores.hpp"
 #include "Operacional.hpp"
+#include "Estrategia.hpp"
 
-Operacional op;
-// Sensores sensores;
-// Motor motores;
+Estrategia estra;
 
-/*!<********************* Declaração de todas variaveis ************************/
+/*!<********** Declaração de todas variaveis ***********/
 
 
-/*!< ***************** Prototipos das Funcoes do Codigo main *******************/
-
-/*!< ******************************************** Setup do Código ****************************************************/
+/*!< ************** Setup do Código *******************/
 void setup() {
 
   Serial.begin(1000000);
 
   /*!< Inicializacoes nescessarias >!*/
-  motores.begin();
 }
 
 
 
-/*************************************************** INICIO DO LOOP **********************************************************************/
+/****************** Inicio do Loop *************************/
 void loop() {
 
 }
-/*************************************************** FINAL DO LOOP ******************************************************************************/
 

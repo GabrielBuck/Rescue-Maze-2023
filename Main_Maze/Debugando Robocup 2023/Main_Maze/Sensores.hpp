@@ -30,15 +30,6 @@ private:
   unsigned long ultima_passagem = 0;  //Usada na medicao do tempo
   float angulo_z = 0;                 // Angulo atual
 
-  /*!< Inicializa MPU */
-  void begin_mpu() {
-    gyroscope.begin();              //Iniciando giroscopio.
-    gyroscope.config_filter(6);     //Setando a 5Hz filtro passa baixa.
-    gyroscope.config_gyro(0);       //Setando completos 200°/s ecala.
-    gyroscope.config_accel(3);      //Setando 16g completos de escala.
-    gyroscope.convert_value(true);  //Ajuste na conversão de valor
-  }
-
   /*!<Retorna intervalo de tempo entre as chamadas*/
   unsigned long tempo() {
     unsigned long tempo_atual = millis();
@@ -49,30 +40,33 @@ private:
 
 public:
 
-  /*!< Todas Funcoes PUBLICAS */
-  // void zerar_mpu();
-  // void calibrar_offset();
-  // float angulo_mpu();
-  // void inclinacao_mpu();
-
+  /******************** ULTRASSONICO ********************/
   int dist[6];  //Armazena os valores das leituras
 
-   // Funcao que percorre cada sensor e exibe os resultados.
-  /*!< 
+  /*Percorre cada sensor e exibe os resultados.
   1:Frente
   2:Direita F 
   3:Direita T 
   4:Tras
   5:Esquerda F
-  6:Esquerda T
-   */
-  void leitura() {
+  6:Esquerda */
+  void ler_dist() {
     for (int i = 0; i < SONAR_NUM; i++) {
       delay(50);  // Wait 50ms between pings (about 20 pings/sec). 29ms should be the shortest delay between pings.
       dist[i] = sonar[i].ping_cm();
     }
   }
-/***************** MPU ***********************/
+  /******************** MPU ***********************/
+
+  /*!< Inicializa MPU */
+  void begin_mpu() {
+    gyroscope.begin();              //Iniciando giroscopio.
+    gyroscope.config_filter(6);     //Setando a 5Hz filtro passa baixa.
+    gyroscope.config_gyro(0);       //Setando completos 200°/s ecala.
+    gyroscope.config_accel(3);      //Setando 16g completos de escala.
+    gyroscope.convert_value(true);  //Ajuste na conversão de valor
+  }
+
   /*!<Retorna o angulo atual da MPU*/
   float angulo_mpu() {
     angulo_z = angulo_z + ((gyroscope.z_gyro() - OFFSET) * DIMENSIONAL) * tempo();
@@ -85,7 +79,7 @@ public:
     angulo_z = 0;
   }
 
- 
+
   /*!< Caso tenha troca da MPU e ESSENCIAL recalibrar.
       Guia para a calibracao: 
       Manter o robo em uma mesa ESTAVEL,
@@ -115,6 +109,34 @@ public:
     } else if (teta <= 0) count++;
     else count = 0;
   }
+
+  /****************** ENCODER *******************/
+
+  bool passo;
+  int passos;
+  bool ultimo_passo;
+
+  /*!< Inicializa o encoder >*/
+  void begin_enconder() {
+    pinMode(14, INPUT);
+  }
+
+  /*!< Faz a leitura e retorna os passos >*/
+  int ler_encoder() {
+    passo = digitalRead(14);
+    if (ultimo_passo != passo) {
+      passos++;
+      passo = ultimo_passo;
+    }
+    return passos;
+  }
+
+  /*!< Zera todos parametros para o Encoder >*/
+  bool zerar_encoder() {
+    ultimo_passo = passo;
+    passos = 0;
+  }
+  /***************** MLX TEMPERATURA *****************/
 
 };
 #endif
