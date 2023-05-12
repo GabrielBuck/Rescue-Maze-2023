@@ -29,6 +29,8 @@ PID pidF(0.5, 0.2, 0.1, 100);  //Frontal
 class Operacional {
 
 private:
+  const Motor *motores;
+  const Sensores *sensores;
 
   int
     quadrado_ant[2];
@@ -40,16 +42,21 @@ private:
 public:
 
   /*! Inicializacao dos Motores e Sensores*/
+  Operacional(const Motor *_motor, const Sensores *_sensores) {
+    motores = _motor;
+    sensores = _sensores;
+  }
+
   void begin() {
-    sensores.begin_enconder();
-    sensores.begin_mpu();
-    motores.begin();
+    sensores->begin_enconder();
+    sensores->begin_mpu();
+    motores->begin();
   }
   /**************** PIDS ******************/
 
   /*! PID para manter o robo no proprio eixo*/
   int PID_lateral() {
-    int aux = ((pidE.calcular(dist[5]) + pidD.calcular(dist[1])) / 2 + pidG.calcular(sensores.angulo_mpu())) / 2;
+    int aux = ((pidE.calcular(dist[5]) + pidD.calcular(dist[1])) / 2 + pidG.calcular(sensores->angulo_mpu())) / 2;
     return aux;
   }
 
@@ -59,9 +66,9 @@ public:
 
   /*! Lê as distancias dos 6 ultrassonicos*/
   void ler_distancias() {
-    sensores.ler_dist();
+    sensores->ler_dist();
     for (int i = 0; i < 6; i++) {
-      dist[i] = sensores.dist[i];
+      dist[i] = sensores->dist[i];
     }
   }
 
@@ -101,12 +108,12 @@ public:
   /*! Girar o Robo */
   void girar(char com) {
     int aux[] = { 500, 500, 500, 500 };  // Inicia com valores de 'E'
-    sensores.zerar_mpu();
+    sensores->zerar_mpu();
 
     //Esquerda
     if (com == 'E') {
-      while (sensores.angulo_mpu() > -90) {
-        motores.potencia(aux);
+      while (sensores->angulo_mpu() > -90) {
+        motores->potencia(aux);
       }
       //Direita
     } else if (com == 'D') {
@@ -114,21 +121,21 @@ public:
       aux[1] = -500;
       aux[2] = -500;
       aux[3] = -500;
-      while (sensores.angulo_mpu() < 90) {
-        motores.potencia(aux);
+      while (sensores->angulo_mpu() < 90) {
+        motores->potencia(aux);
       }
     }
-    sensores.zerar_mpu();
+    sensores->zerar_mpu();
   }
 
   /*! Para todos motores*/
   void parar() {
-    motores.mesma_potencia(0);
+    motores->mesma_potencia(0);
   }
 
   /*! Volta de re quando entramos em um quadrado preto*/
   void sair_preto() {
-    motores.mesma_potencia(-500);
+    motores->mesma_potencia(-500);
   }
 
   /*! Espera 5 seg no azul*/
@@ -139,20 +146,20 @@ public:
 
   /*! Movimenta o robo para frente*/
   void movimento(int velocidade = 500, int diferenca_lateral = 0, int quadrados = 1) {
-    motores.mesma_potencia(velocidade, diferenca_lateral);
+    motores->mesma_potencia(velocidade, diferenca_lateral);
   }
 
   /*! São definidos os parametros de distancia e do Encoder, para a troca*/
   void setar_quadrado(int frente, int tras) {
     quadrado_ant[0] = frente;
     quadrado_ant[1] = tras;
-    sensores.zerar_encoder();
+    sensores->zerar_encoder();
   }
 
   /*Um dos parametros da troca*/
   bool troca_encoder() {
-    if (sensores.ler_encoder() >= NUM_PASSOS) {  //Checa se foram passos suficientes
-      sensores.zerar_encoder();
+    if (sensores->ler_encoder() >= NUM_PASSOS) {  //Checa se foram passos suficientes
+      sensores->zerar_encoder();
       return true;
     } else {
       return false;
@@ -169,5 +176,18 @@ public:
       return false;
     }
   }
-};
+
+  /*! "Acerta" a posicao do robo*/
+  void correcao(float angulo) {
+    sensores->zerar_mpu();
+    if (dist_angulo > 0) {
+      while (giro.angulo_mpu() < dist_angulo) {
+        mesma_potencia(200, 0, 'E');
+      }
+    } else if (dist_angulo < 0) {
+      while (giro.angulo_mpu() > dist_angulo) {
+        mesma_potencia(200, 0, 'D');
+      }
+    }
+  };
 #endif
