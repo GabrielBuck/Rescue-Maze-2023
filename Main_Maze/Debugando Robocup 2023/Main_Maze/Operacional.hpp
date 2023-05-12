@@ -8,6 +8,7 @@ As funcoes dessa classe ainda nao sao as ideias para utilizicacao no codigo main
 /*!< Incluindo classes */
 #include "Motor.hpp"
 #include "Sensores.hpp"
+#include "PID.hpp"
 
 Motor motores;
 Sensores sensores;
@@ -15,6 +16,15 @@ Sensores sensores;
 #define CIRCUNFERENCIA_RODA 20
 #define COMPRIMENTO_ROBO 150
 #define NUM_PASSOS 10
+
+
+/*! Constroi os PIDs*/
+//KP, KI, KD, Setpoint
+PID pidE(0.5, 0.2, 0.1, 100);  //Esquerdo
+PID pidD(0.5, 0.2, 0.1, 100);  //Direito
+PID pidG(0.5, 0.2, 0.1, 100);  //Giroscopio
+PID pidF(0.5, 0.2, 0.1, 100);  //Frontal
+
 
 class Operacional {
 
@@ -35,18 +45,26 @@ public:
     sensores.begin_mpu();
     motores.begin();
   }
+  /**************** PIDS ******************/
+
+  /*! PID para manter o robo no proprio eixo*/
+  int PID_lateral() {
+    int aux = ((pidE.calcular(dist[5]) + pidD.calcular(dist[1])) / 2 + pidG.calcular(sensores.angulo_mpu())) / 2;
+    return aux;
+  }
+
 
   /******************** DISTANCIAS **********************/
   int dist[6];
-  
+
   /*! Lê as distancias dos 6 ultrassonicos*/
-  void ler_distancias(){
+  void ler_distancias() {
     sensores.ler_dist();
-    for(int i=0; i<6; i++){
-    dist[i] = sensores.dist[i];
+    for (int i = 0; i < 6; i++) {
+      dist[i] = sensores.dist[i];
     }
   }
-  
+
   /*! Estima o angulo atual com base em dois valores de distancia*/
   float angulo(int ef, int et, int df, int dt) {
     int angulo;
@@ -80,7 +98,6 @@ public:
   }
 
   /******************* MOVIMENTACAO ********************/
-
   /*! Girar o Robo */
   void girar(char com) {
     int aux[] = { 500, 500, 500, 500 };  // Inicia com valores de 'E'
@@ -152,6 +169,5 @@ public:
       return false;
     }
   }
-
 };
 #endif
