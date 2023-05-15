@@ -22,8 +22,6 @@ public:
   /*! Movimentamos 1 quadrado para Frente */
   void frente(){
 
-    int correcao;
-
     //Parametros para troca
     op.ler_distancias();
     op.setar_quadrado(op.dist[0], op.dist[3]);

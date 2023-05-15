@@ -47,12 +47,22 @@ public:
   }
   /**************** PIDS ******************/
 
-  /*! PID para manter o robo no proprio eixo*/
+  /*! Todos PIDS */
   int PID_lateral() {
     int aux = ((pidE.calcular(dist[5]) + pidD.calcular(dist[1])) / 2 + pidG.calcular(sensores.angulo_mpu())) / 2;
     return aux;
   }
 
+  /*! PID para diagonal */
+  int PID_diagonal() {
+    int aux = pidG.calcular(sensores.angulo_mpu());
+    return aux;
+  }
+
+  /*! Setar PID para andar em diagonal*/
+  void setar_PID_diagonal(int setpoint = 0) {
+    pidG.setSetpoint(setpoint);
+  }
 
   /******************** DISTANCIAS **********************/
   int dist[6];
@@ -168,6 +178,10 @@ public:
     } else {  // Nao houve troca
       return false;
     }
+  }
+
+  void correcao(){
+
   }
 };
 #endif
