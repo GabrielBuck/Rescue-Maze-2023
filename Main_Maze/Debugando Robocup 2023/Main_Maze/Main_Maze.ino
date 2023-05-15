@@ -13,12 +13,7 @@
 #include "Operacional.hpp"
 #include "Estrategia.hpp"
 
-
-Motor motor;
-Sensores sensor;
-Operacional op(&motor, &sensor);
-Estrategia estra(&op);
-
+Estrategia estra;
 
 /*!<********** Declaração de todas variaveis ***********/
 
