@@ -8,7 +8,7 @@
 //
 
 /*!< Incluindo classes  */
-#include "Motor.hpp"
+//#include "Motor.hpp"
 #include "Sensores.hpp"
 #include "Operacional.hpp"
 #include "Estrategia.hpp"

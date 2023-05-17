@@ -15,37 +15,32 @@ private:
 public:
 
   /*! Realiza todas inicializações*/
-  void iniciar(){
+  void iniciar() {
     op.begin();
   }
 
   /*! Movimentamos 1 quadrado para Frente */
-  void frente(){
+  void frente() {
 
     //Parametros para troca
     op.ler_distancias();
     op.setar_quadrado(op.dist[0], op.dist[3]);
 
     //Loop ate a troca de quadrado
-    while(op.troca_quadrado(op.dist[0], op.dist[3]) == false){
+    while (op.troca_quadrado(op.dist[0], op.dist[3]) == false) {
 
       op.ler_distancias();
-      op.movimento(500, op.PID_lateral());
-  
+      op.movimento(500);
     }
   }
 
   /*! Giramos para Esq ou Dir */
-  void giro(char com){
+  void giro(char com) {
     op.girar(com);
   }
 
   /*! Busca vitimas com a camera*/
-  void buscar_vit(){
-
+  void buscar_vit() {
   }
-
-
-  
 };
 #endif

@@ -6,11 +6,11 @@ e o funcionamento dos Atuadores.
 As funcoes dessa classe ainda nao sao as ideias para utilizicacao no codigo main*/
 
 /*!< Incluindo classes */
-#include "Motor.hpp"
-#include "Sensores.hpp"
+#include "Motor_Novo.hpp"
+#include "Sensores_Novo.hpp"
 #include "PID.hpp"
 
-Motor motores;
+Motor_Novo motores;
 Sensores sensores;
 
 #define CIRCUNFERENCIA_RODA 20
@@ -20,8 +20,6 @@ Sensores sensores;
 
 /*! Constroi os PIDs*/
 //KP, KI, KD, Setpoint
-PID pidE(0.5, 0.2, 0.1, 100);  //Esquerdo
-PID pidD(0.5, 0.2, 0.1, 100);  //Direito
 PID pidG(0.5, 0.2, 0.1, 100);  //Giroscopio
 PID pidF(0.5, 0.2, 0.1, 100);  //Frontal
 
@@ -46,12 +44,6 @@ public:
     motores.begin();
   }
   /**************** PIDS ******************/
-
-  /*! Todos PIDS */
-  int PID_lateral() {
-    int aux = ((pidE.calcular(dist[5]) + pidD.calcular(dist[1])) / 2 + pidG.calcular(sensores.angulo_mpu())) / 2;
-    return aux;
-  }
 
   /*! PID para diagonal */
   int PID_diagonal() {
@@ -180,8 +172,7 @@ public:
     }
   }
 
-  void correcao(){
-
+  void correcao() {
   }
 };
 #endif
