@@ -1,27 +1,26 @@
-#include <MPU6050.h>
-
 #ifndef Sensores_hpp
 #define Sensores_hpp
 
-#include <NewPing.h> /*!< Inclusão da biblioteca do Ultrassonico link: "https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home"*/
-#include <MPU6050.h> /*!< Inclusão da biblioteca do MPU */
+#include <Wire.h>
+#include <Ultrasonic.h>        /*!< Inclusão da biblioteca do Ultrassonico link: "https://github.com/ErickSimoes/Ultrasonic/blob/master/"*/
+#include <MPU6050.h>           /*!< Inclusão da biblioteca do MPU */
+#include <Adafruit_MLX90614.h> /*!< Inclusão da biblioteca do MLX */
 
-#define SONAR_NUM 6       // Numero de sensors.
+
 #define MAX_DISTANCE 200  //Distancia Maxima (em cm).
+#define TIMEOUT 20000     //Tempo maximo de espera para o retorno do pulso do ultrassonico.
 #define OFFSET 0          /*!< Define o valor de correcao para MPU */
 #define DIMENSIONAL 0     /*!< Define uma constante de correcao para MPU*/
 
 MPU6050 gyroscope;
 
-/*Ordem dos Ultrassonicos em sentido Horário !!! */
-NewPing sonar[SONAR_NUM] = {
-  NewPing(1, 2, MAX_DISTANCE),  // Pino de disparo de cada sensor, pino de eco e distância máxima para ping.
-  NewPing(3, 4, MAX_DISTANCE),
-  NewPing(5, 6, MAX_DISTANCE),
-  NewPing(7, 8, MAX_DISTANCE),
-  NewPing(9, 10, MAX_DISTANCE),
-  NewPing(11, 12, MAX_DISTANCE)
-};
+/*Ordem dos Ultrassonicos em sentido Horário! */
+Ultrasonic frente(12, 13, TIMEOUT);
+Ultrasonic direita_f(12, 13, TIMEOUT);
+Ultrasonic direita_t(12, 13, TIMEOUT);
+Ultrasonic tras(12, 13, TIMEOUT);
+Ultrasonic esquerda_t(12, 13, TIMEOUT);
+Ultrasonic esquerda_f(12, 13, TIMEOUT);
 
 class Sensores {
 
@@ -43,18 +42,14 @@ public:
   /******************** ULTRASSONICO ********************/
   int dist[6];  //Armazena os valores das leituras
 
-  /*Percorre cada sensor e exibe os resultados.
-  1:Frente
-  2:Direita F 
-  3:Direita T 
-  4:Tras
-  5:Esquerda F
-  6:Esquerda */
+  /*Percorre cada sensor e exibe os resultados. EM SENTIDO HORARIO!!!*/
   void ler_dist() {
-    for (int i = 0; i < SONAR_NUM; i++) {
-      delay(50);  // Wait 50ms between pings (about 20 pings/sec). 29ms should be the shortest delay between pings.
-      dist[i] = sonar[i].ping_cm();
-    }
+    dist[0] = frente.read();
+    dist[1] = direita_f.read();
+    dist[2] = direita_t.read();
+    dist[3] = tras.read();
+    dist[4] = esquerda_t.read();
+    dist[5] = esquerda_f.read();
   }
   /******************** MPU ***********************/
 
@@ -137,6 +132,5 @@ public:
     passos = 0;
   }
   /***************** MLX TEMPERATURA *****************/
-
 };
 #endif
