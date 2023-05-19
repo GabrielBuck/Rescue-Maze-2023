@@ -44,10 +44,10 @@ public:
     motore2.setPortProtocolVersion(DXL_PROTOCOL_VERSION);
 
     // Set Port baudrate to 57600bps. This has to match with DYNAMIXEL baudrate.
-    motord1.begin(57600);
-    motord2.begin(57600);
-    motore1.begin(57600);
-    motore2.begin(57600);
+    motord1.begin(100000);
+    motord2.begin(100000);
+    motore1.begin(100000);
+    motore2.begin(100000);
 
     //Modo velocidade
     motord1.setOperatingMode(ID_DF, OP_VELOCITY);

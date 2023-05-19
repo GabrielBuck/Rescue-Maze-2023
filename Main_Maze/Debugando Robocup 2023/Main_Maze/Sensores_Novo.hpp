@@ -8,19 +8,19 @@
 
 
 #define MAX_DISTANCE 200  //Distancia Maxima (em cm).
-#define TIMEOUT 20000     //Tempo maximo de espera para o retorno do pulso do ultrassonico.
+#define TIMEOUT 50000     //Tempo maximo de espera para o retorno do pulso do ultrassonico.
 #define OFFSET 0          /*!< Define o valor de correcao para MPU */
 #define DIMENSIONAL 0     /*!< Define uma constante de correcao para MPU*/
 
 MPU6050 gyroscope;
 
 /*Ordem dos Ultrassonicos em sentido Horário! */
-Ultrasonic frente(12, 13, TIMEOUT);
-Ultrasonic direita_f(12, 13, TIMEOUT);
-Ultrasonic direita_t(12, 13, TIMEOUT);
-Ultrasonic tras(12, 13, TIMEOUT);
-Ultrasonic esquerda_t(12, 13, TIMEOUT);
-Ultrasonic esquerda_f(12, 13, TIMEOUT);
+//Ultrasonic frente(12, 13, TIMEOUT);
+Ultrasonic direita_f(48, 50, TIMEOUT);
+Ultrasonic direita_t(38, 40, TIMEOUT);
+//Ultrasonic tras(12, 13, TIMEOUT);
+Ultrasonic esquerda_t(26, 32, TIMEOUT);
+Ultrasonic esquerda_f(28, 30, TIMEOUT);
 
 class Sensores {
 
@@ -40,16 +40,16 @@ private:
 public:
 
   /******************** ULTRASSONICO ********************/
-  int dist[6];  //Armazena os valores das leituras
+  int dist[44];  //Armazena os valores das leituras
 
   /*Percorre cada sensor e exibe os resultados. EM SENTIDO HORARIO!!!*/
   void ler_dist() {
-    dist[0] = frente.read();
-    dist[1] = direita_f.read();
-    dist[2] = direita_t.read();
-    dist[3] = tras.read();
-    dist[4] = esquerda_t.read();
-    dist[5] = esquerda_f.read();
+    //dist[0] = frente.read();
+    dist[0] = direita_f.read();
+    dist[1] = direita_t.read();
+    //dist[3] = tras.read();
+    dist[2] = esquerda_t.read();
+    dist[3] = esquerda_f.read();
   }
   /******************** MPU ***********************/
 

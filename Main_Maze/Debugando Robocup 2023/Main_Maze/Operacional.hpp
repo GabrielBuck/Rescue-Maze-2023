@@ -7,14 +7,16 @@ As funcoes dessa classe ainda nao sao as ideias para utilizicacao no codigo main
 
 /*!< Incluindo classes */
 #include "Motor_Novo.hpp"
+//#include "Motor.hpp"
 #include "Sensores_Novo.hpp"
 #include "PID.hpp"
 
 Motor_Novo motores;
+//Motor motores;
 Sensores sensores;
 
 #define CIRCUNFERENCIA_RODA 20
-#define COMPRIMENTO_ROBO 150
+#define COMPRIMENTO_ROBO 12
 #define NUM_PASSOS 10
 
 
@@ -62,17 +64,21 @@ public:
   /*! Lê as distancias dos 6 ultrassonicos*/
   void ler_distancias() {
     sensores.ler_dist();
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 4; i++) {
       dist[i] = sensores.dist[i];
+      Serial.print("Dist ");
+      Serial.print(i);
+      Serial.print(":");
+      Serial.println(dist[i]);
     }
   }
 
   /*! Estima o angulo atual com base em dois valores de distancia*/
-  float angulo(int ef, int et, int df, int dt) {
-    int angulo;
-    int cat_op;
-    int frente;
-    int tras;
+  float angulo(float df, float dt, float et, float ef) {
+    float angulo;
+    float cat_op;
+    float frente;
+    float tras;
 
     //Decidimos qual lado do robo e o mais proximo para medir o angulo
     if (ef + et <= df + dt) {
@@ -83,19 +89,23 @@ public:
       tras = dt;
     }
 
-    if (frente >= tras) {
+    if (frente > tras) {
       cat_op = frente - tras;
     } else {
-      cat_op = frente - tras;
+      cat_op = tras - frente;
     }
 
-    angulo = atan(cat_op / COMPRIMENTO_ROBO) * 180 / M_PI;
+    angulo = asin(cat_op / COMPRIMENTO_ROBO) * 180 / M_PI;
 
     //Correcao dependendo da angulacao
-    if (ef >= df) {
+    if (df >= ef) {
       angulo = angulo * -1;
     }
 
+    Serial.print("Angulo: ");
+    Serial.println(angulo);
+    Serial.print("Cateto Oposto: ");
+    Serial.println(cat_op);
     return angulo;
   }
 

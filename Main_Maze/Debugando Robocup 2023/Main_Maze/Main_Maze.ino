@@ -14,6 +14,7 @@
 #include "Estrategia.hpp"
 
 Estrategia estra;
+Operacional op1;
 
 /*!<********** Declaração de todas variaveis ***********/
 
@@ -21,8 +22,8 @@ Estrategia estra;
 /*!< ************** Setup do Código *******************/
 void setup() {
 
-  Serial.begin(1000000);
-
+  Serial.begin(9600);
+  Serial.println("Comecei");
   /*!< Inicializacoes nescessarias >!*/
 }
 
@@ -30,6 +31,5 @@ void setup() {
 
 /****************** Inicio do Loop *************************/
 void loop() {
-
+ 
 }
-
