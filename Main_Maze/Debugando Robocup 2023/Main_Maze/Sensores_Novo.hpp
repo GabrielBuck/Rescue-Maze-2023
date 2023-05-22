@@ -2,15 +2,16 @@
 #define Sensores_hpp
 
 #include <Wire.h>
-#include <Ultrasonic.h>        /*!< Inclusão da biblioteca do Ultrassonico link: "https://github.com/ErickSimoes/Ultrasonic/blob/master/"*/
-#include <MPU6050.h>           /*!< Inclusão da biblioteca do MPU */
+#include <Ultrasonic.h> /*!< Inclusão da biblioteca do Ultrassonico link: "https://github.com/ErickSimoes/Ultrasonic/blob/master/"*/
+#include <MPU6050.h>    /*!< Inclusão da biblioteca do MPU */
+//#include <MPU6050_tockn.h>     /*!< Inclusão da biblioteca do MPU */
 #include <Adafruit_MLX90614.h> /*!< Inclusão da biblioteca do MLX */
 
 
 #define MAX_DISTANCE 200  //Distancia Maxima (em cm).
 #define TIMEOUT 50000     //Tempo maximo de espera para o retorno do pulso do ultrassonico.
-#define OFFSET 0          /*!< Define o valor de correcao para MPU */
-#define DIMENSIONAL 0     /*!< Define uma constante de correcao para MPU*/
+#define OFFSET 499.50     /*!< Define o valor de correcao para MPU */
+#define DIMENSIONAL 1     /*!< Define uma constante de correcao para MPU*/
 
 MPU6050 gyroscope;
 
@@ -40,7 +41,7 @@ private:
 public:
 
   /******************** ULTRASSONICO ********************/
-  int dist[44];  //Armazena os valores das leituras
+  int dist[4];  //Armazena os valores das leituras
 
   /*Percorre cada sensor e exibe os resultados. EM SENTIDO HORARIO!!!*/
   void ler_dist() {
@@ -65,6 +66,22 @@ public:
   /*!<Retorna o angulo atual da MPU*/
   float angulo_mpu() {
     angulo_z = angulo_z + ((gyroscope.z_gyro() - OFFSET) * DIMENSIONAL) * tempo();
+    Serial.print("Z ang: ");
+    Serial.print(gyroscope.z_gyro());
+    /*Serial.print(" X ang: ");
+    Serial.print(gyroscope.x_gyro());
+    Serial.print(" Y ang: ");
+    Serial.print(gyroscope.y_gyro());
+    Serial.print(" X Acel: ");
+    Serial.print(gyroscope.x_accel());
+    Serial.print(" Y Acel: ");
+    Serial.print(gyroscope.y_accel());
+    Serial.print(" Z Acel: ");
+    Serial.print(gyroscope.z_accel());*/
+    Serial.print(" Angulo: ");
+    Serial.print(angulo_z);
+    Serial.print(" Tempo: ");
+    Serial.println(tempo());
     return angulo_z;
   }
 
@@ -81,11 +98,12 @@ public:
       sem NENHUM tipo de interferencia ate o fim da calibracao.
       Ao fim da medicao subistituir a constante OFFSET pelo novo valor*/
   void calibrar_offset() {
-    float offset;
-    for (int i = 0; i < 10000; i++) {
+    double offset;
+    for (int i = 0; i < 10; i++) {
       offset = offset + gyroscope.z_gyro();
+      Serial.println(i);
     }
-    offset = offset / 10000;
+    offset = offset / 10;
     Serial.print("Offset estimado: ");
     Serial.println(offset);
   }

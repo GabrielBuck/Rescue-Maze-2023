@@ -9,11 +9,13 @@
 
 /*!< Incluindo classes  */
 //#include "Motor.hpp"
-//#include "Sensores.hpp"
+#include "Sensores_Novo.hpp"
 #include "Operacional.hpp"
 #include "Estrategia.hpp"
+#include <Wire.h>
 
 Estrategia estra;
+Sensores sen;
 Operacional op1;
 
 /*!<********** Declaração de todas variaveis ***********/
@@ -23,13 +25,17 @@ Operacional op1;
 void setup() {
 
   Serial.begin(9600);
-  Serial.println("Comecei");
+  //Serial.println("Comecei");
   /*!< Inicializacoes nescessarias >!*/
+  sen.begin_mpu();
 }
 
 
 
 /****************** Inicio do Loop *************************/
 void loop() {
- 
+
+  sen.angulo_mpu();
+  //sen.calibrar_offset();
+  //delay(500);
 }
