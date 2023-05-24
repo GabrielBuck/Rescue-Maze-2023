@@ -4,7 +4,6 @@
 #include <Wire.h>
 #include <Ultrasonic.h> /*!< Inclusão da biblioteca do Ultrassonico link: "https://github.com/ErickSimoes/Ultrasonic/blob/master/"*/
 #include <MPU6050.h>    /*!< Inclusão da biblioteca do MPU */
-//#include <MPU6050_tockn.h>     /*!< Inclusão da biblioteca do MPU */
 #include <Adafruit_MLX90614.h> /*!< Inclusão da biblioteca do MLX */
 
 

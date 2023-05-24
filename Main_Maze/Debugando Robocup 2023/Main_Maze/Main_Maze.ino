@@ -12,7 +12,6 @@
 #include "Sensores_Novo.hpp"
 #include "Operacional.hpp"
 #include "Estrategia.hpp"
-#include <Wire.h>
 
 Estrategia estra;
 Sensores sen;

@@ -5,8 +5,10 @@
 As funcoes dessa classe são as UNICAS que devem ser utilizadas no main*/
 
 #include "Operacional.hpp"
+#include "Mapa.hpp"
 
 Operacional op;
+Mapa mapa;
 
 class Estrategia {
 
@@ -19,9 +21,13 @@ public:
     op.begin();
   }
 
-  /*! Movimentamos 1 quadrado para Frente */
-  void frente() {
 
+  /*! Movimentamos 1 quadrado para Frente */
+  void frente(int ori) {
+
+    //Cordenadas de inicio
+    mapa.save_cord();
+    
     //Parametros para troca
     op.ler_distancias();
     op.setar_quadrado(op.dist[0], op.dist[3]);
@@ -32,6 +38,10 @@ public:
       op.ler_distancias();
       op.movimento(500);
     }
+
+
+    mapa.orientacao(ori);
+    mapa.move_cordenada(false, false);
   }
 
   /*! Giramos para Esq ou Dir */
