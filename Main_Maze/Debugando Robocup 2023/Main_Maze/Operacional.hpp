@@ -45,6 +45,13 @@ public:
     sensores.begin_mpu();
     motores.begin();
   }
+  /**************** CORES *****************/
+  char cor() {
+    //Le o sensor
+    char cor = 'w';
+    return cor;
+  }
+
   /**************** PIDS ******************/
 
   /*! PID para diagonal */
@@ -60,6 +67,8 @@ public:
 
   /******************** DISTANCIAS **********************/
   int dist[6];
+  bool passagens[4];
+
 
   /*! Lê as distancias dos 6 ultrassonicos*/
   void ler_distancias() {
@@ -73,12 +82,26 @@ public:
     }
   }
 
+  /*! Verifica a existencia de passagens nas quatro direcoes*/
+  void medir_passagens() {
+    if (dist[0] >= 25) { passagens[0] = true; }
+    if (dist[1] + dist[2] / 2 >= 25) { passagens[1] = true; }
+    if (dist[3] >= 25) { passagens[2] = true; }
+    if (dist[4] + dist[5] / 2 >= 25) { passagens[3] = true; }
+  }
+
   /*! Estima o angulo atual com base em dois valores de distancia*/
-  float angulo(float df, float dt, float et, float ef) {
-    float angulo;
-    float cat_op;
-    float frente;
-    float tras;
+  float angulo() {
+
+    ler_distancias();
+    int df = dist[1],
+        dt = dist[2],
+        et = dist[4],
+        ef = dist[5];
+    float angulo,
+      cat_op,
+      frente,
+      tras;
 
     //Decidimos qual lado do robo e o mais proximo para medir o angulo
     if (ef + et <= df + dt) {
@@ -108,6 +131,8 @@ public:
     Serial.println(cat_op);
     return angulo;
   }
+
+
 
   /******************* MOVIMENTACAO ********************/
   /*! Girar o Robo */
@@ -182,7 +207,35 @@ public:
     }
   }
 
-  void correcao() {
+  /*Correcao do angulo do robo a cada parada*/
+  void correcao(float angulo) {
+
+    //Parte 1 alinha o robo com a parede
+    int aux[] = { 300, 300, 300, 300 };  // Inicia com valores para esquerda
+    sensores.zerar_mpu();
+
+    //Ajuste para esquerda
+    if (angulo <= -10.0) {
+      while (sensores.angulo_mpu() < 0) {
+        motores.potencia(aux);
+      }
+    }  //Ajuste para direita
+    else if (angulo >= 10.0) {
+      aux[0] = -300;
+      aux[1] = -300;
+      aux[2] = -300;
+      aux[3] = -300;
+      while (sensores.angulo_mpu() < 0) {
+        motores.potencia(aux);
+      }
+    }
+    sensores.zerar_mpu();
+
+    /*Parte 2, Caso o Robo esteja muito distante do centro
+    do quarado, ajustamos sua trajetoria em uma diagonal para voltar ao centro*/ 
+     if (dist[1] % 30 < 10) {
+
+    }
   }
 };
 #endif

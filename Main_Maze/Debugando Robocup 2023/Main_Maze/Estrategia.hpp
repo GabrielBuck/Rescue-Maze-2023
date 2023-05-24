@@ -27,7 +27,10 @@ public:
 
     //Cordenadas de inicio
     mapa.save_cord();
-    
+
+    //Se estiver muito fora do centro do quadrado
+    op.correcao(op.angulo());
+
     //Parametros para troca
     op.ler_distancias();
     op.setar_quadrado(op.dist[0], op.dist[3]);
@@ -39,9 +42,11 @@ public:
       op.movimento(500);
     }
 
-
+    op.medir_passagens();
+    mapa.recebe_passagens_cor(op.passagens, op.cor());
     mapa.orientacao(ori);
     mapa.move_cordenada(false, false);
+    //mapa.imprimir();
   }
 
   /*! Giramos para Esq ou Dir */

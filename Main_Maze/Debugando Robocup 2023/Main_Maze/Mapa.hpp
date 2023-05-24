@@ -37,10 +37,11 @@ public:
     last_y = y;
   }
   /* Recebe a cor e as passagens do quadrado novo */
-  void recebe_passagens_cor(aux[4], char color) {
+  void recebe_passagens_cor(bool aux[4], char color) {
     for (int i = 0; i < 4; i++) {
       passagens[i] = aux[i];
     }
+    cor = color;
   }
 
   /* Atualiza os bits da posicao atual do mapa */
@@ -125,5 +126,24 @@ public:
       x--;
     }
   }
+
+  /*! Impressão completa do mapa atual*/
+  void imprimir() {
+    
+    for (int i = 0; i < SIZE; i++) {
+      for (int j = 0; j < SIZE; j++) {
+        // Print the value in hexadecimal format
+        Serial.print("[");
+        Serial.print(mapa[i][j], HEX);
+        Serial.print("] ");
+
+        // Print the value in binary format
+        Serial.print(String(mapa[i][j], BIN));
+        Serial.print(" ");
+      }
+      Serial.println();  // Move to the next line after each row
+    }
+  }
+
 };
 #endif
