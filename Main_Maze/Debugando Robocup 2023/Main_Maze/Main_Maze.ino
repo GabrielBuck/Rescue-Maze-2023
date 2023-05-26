@@ -8,25 +8,25 @@
 //
 
 /*!< Incluindo classes  */
-//#include "Motor.hpp"
-#include "Sensores_Novo.hpp"
 #include "Operacional.hpp"
 #include "Estrategia.hpp"
+#include "Mapa.hpp"
 
+Mapa mapa_;
 Estrategia estra;
-Sensores sen;
 Operacional op1;
 
 /*!<********** Declaração de todas variaveis ***********/
 
+/*!<********** Protótipo das Funções ***********/
+char comando_manual();
 
 /*!< ************** Setup do Código *******************/
 void setup() {
 
   Serial.begin(9600);
-  //Serial.println("Comecei");
+  Serial.println("Iniciei");
   /*!< Inicializacoes nescessarias >!*/
-  sen.begin_mpu();
 }
 
 
@@ -34,7 +34,41 @@ void setup() {
 /****************** Inicio do Loop *************************/
 void loop() {
 
-  sen.angulo_mpu();
-  //sen.calibrar_offset();
-  //delay(500);
+  //Frente
+  if (comando_manual() == 'F') {
+
+    Serial.println("Frente!!");
+    //Cordenadas de inicio
+    mapa_.save_cord();
+    mapa_.recebe_passagens_cor(op.passagens, op.cor());
+    mapa_.orientacao(ori);
+    mapa_.move_cordenada(false, false);
+    mapa_.imprimir();
+  } 
+  //Start
+  else if (comando_manual() == 'S') {
+
+    Serial.println("Comecei o mapa");
+    //Cordenadas de inicio
+    mapa_.save_cord();
+    mapa_.recebe_passagens_cor(op.passagens, op.cor());
+    mapa_.orientacao(ori);
+    mapa_.imprimir();
+  }
+}
+}
+
+/*!<********** Declaração das Funções ***********/
+
+/*! Recebe o comando pela porta Serial*/
+char comando_manual() {
+
+  char input;
+  while (!Serial.available()) {
+    // Wait for character input
+  }
+
+  input = Serial.read();
+
+  return input;
 }

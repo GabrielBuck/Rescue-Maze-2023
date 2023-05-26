@@ -1,16 +1,15 @@
 #ifndef Sensores_hpp
 #define Sensores_hpp
 
-#include <Wire.h>
-#include <Ultrasonic.h> /*!< Inclusão da biblioteca do Ultrassonico link: "https://github.com/ErickSimoes/Ultrasonic/blob/master/"*/
-#include <MPU6050.h>    /*!< Inclusão da biblioteca do MPU */
+#include <Ultrasonic.h>        /*!< Inclusão da biblioteca do Ultrassonico link: "https://github.com/ErickSimoes/Ultrasonic/blob/master/"*/
+#include <MPU6050.h>           /*!< Inclusão da biblioteca do MPU */
 #include <Adafruit_MLX90614.h> /*!< Inclusão da biblioteca do MLX */
 
 
 #define MAX_DISTANCE 200  //Distancia Maxima (em cm).
 #define TIMEOUT 50000     //Tempo maximo de espera para o retorno do pulso do ultrassonico.
-#define OFFSET 499.50     /*!< Define o valor de correcao para MPU */
-#define DIMENSIONAL 1     /*!< Define uma constante de correcao para MPU*/
+#define OFFSET 0.85//0.88       /*!< Define o valor de correcao para MPU */
+#define DIMENSIONAL 6.8     /*!< Define uma constante de correcao para MPU*/
 
 MPU6050 gyroscope;
 
@@ -26,13 +25,13 @@ class Sensores {
 
 private:
 
-  unsigned long ultima_passagem = 0;  //Usada na medicao do tempo
-  float angulo_z = 0;                 // Angulo atual
+  float ultima_passagem = 0;  //Usada na medicao do tempo
+  float angulo_z = 0;         // Angulo atual
 
   /*!<Retorna intervalo de tempo entre as chamadas*/
-  unsigned long tempo() {
-    unsigned long tempo_atual = millis();
-    unsigned long tempo_decorrido = tempo_atual - ultima_passagem;
+  float tempo() {
+    float tempo_atual = (float)micros() / 1000000.0;
+    float tempo_decorrido = tempo_atual - ultima_passagem;
     ultima_passagem = tempo_atual;
     return tempo_decorrido;
   }
@@ -57,14 +56,14 @@ public:
   void begin_mpu() {
     gyroscope.begin();              //Iniciando giroscopio.
     gyroscope.config_filter(6);     //Setando a 5Hz filtro passa baixa.
-    gyroscope.config_gyro(0);       //Setando completos 200°/s ecala.
+    gyroscope.config_gyro(1);       //Setando completos 200°/s ecala.
     gyroscope.config_accel(3);      //Setando 16g completos de escala.
     gyroscope.convert_value(true);  //Ajuste na conversão de valor
   }
 
   /*!<Retorna o angulo atual da MPU*/
   float angulo_mpu() {
-    angulo_z = angulo_z + ((gyroscope.z_gyro() - OFFSET) * DIMENSIONAL) * tempo();
+    angulo_z += ((gyroscope.z_gyro() - OFFSET) * DIMENSIONAL) * tempo();
     Serial.print("Z ang: ");
     Serial.print(gyroscope.z_gyro());
     /*Serial.print(" X ang: ");
@@ -98,11 +97,11 @@ public:
       Ao fim da medicao subistituir a constante OFFSET pelo novo valor*/
   void calibrar_offset() {
     double offset;
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10000; i++) {
       offset = offset + gyroscope.z_gyro();
+      offset = offset / 2;
       Serial.println(i);
     }
-    offset = offset / 10;
     Serial.print("Offset estimado: ");
     Serial.println(offset);
   }
