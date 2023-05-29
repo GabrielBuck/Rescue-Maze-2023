@@ -1,19 +1,8 @@
 #ifndef Mapa_hpp
 #define Mapa_hpp
 
-/*! */
-
-#include "Mapa.hpp"
-
-//Informacoes a serem recebidas
-bool passagens[4];
-char cor;
-char mov;
-int ori;
-
-//Mapa
-const int SIZE = 3;
-
+//Tamanho do mapa
+#define SIZE 3
 
 //Cordenadas do robo
 int x = 1,
@@ -27,7 +16,14 @@ class Mapa {
 
 private:
 
+  //Informacoes a serem recebidas
+  char cor;
+  char mov;
+  int ori;
+  bool passagens[4];
+
   unsigned char mapa[SIZE][SIZE] = { { 0 } };
+
 
 public:
 
@@ -129,7 +125,7 @@ public:
 
   /*! Impressão completa do mapa atual*/
   void imprimir() {
-    
+
     for (int i = 0; i < SIZE; i++) {
       for (int j = 0; j < SIZE; j++) {
         // Print the value in hexadecimal format
@@ -144,6 +140,5 @@ public:
       Serial.println();  // Move to the next line after each row
     }
   }
-
 };
 #endif

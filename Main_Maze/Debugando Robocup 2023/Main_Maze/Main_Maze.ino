@@ -14,7 +14,6 @@
 
 Mapa mapa_;
 Estrategia estra;
-Operacional op1;
 
 /*!<********** Declaração de todas variaveis ***********/
 
@@ -37,6 +36,7 @@ void loop() {
   //Frente
   if (comando_manual() == 'F') {
 
+    
     Serial.println("Frente!!");
     //Cordenadas de inicio
     mapa_.save_cord();
@@ -44,7 +44,7 @@ void loop() {
     mapa_.orientacao(ori);
     mapa_.move_cordenada(false, false);
     mapa_.imprimir();
-  } 
+  }
   //Start
   else if (comando_manual() == 'S') {
 
@@ -56,7 +56,7 @@ void loop() {
     mapa_.imprimir();
   }
 }
-}
+
 
 /*!<********** Declaração das Funções ***********/
 

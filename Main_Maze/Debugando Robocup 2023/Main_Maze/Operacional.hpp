@@ -134,9 +134,12 @@ public:
 
 
 
-  /******************* MOVIMENTACAO ********************/
+  /************************** MOVIMENTACAO ******************************/
+
+  /****** BÁSICAS ******/
+
   /*! Girar o Robo */
-  void girar(char com) {
+  void girar(int com) {
     int aux[] = { 500, 500, 500, 500 };  // Inicia com valores de 'E'
     sensores.zerar_mpu();
 
@@ -179,6 +182,11 @@ public:
     motores.mesma_potencia(velocidade, diferenca_lateral);
   }
 
+  /****** TROCA DE QUADRADO ******/
+  //Distância 
+   int trajetoria = 30;
+
+
   /*! São definidos os parametros de distancia e do Encoder, para a troca*/
   void setar_quadrado(int frente, int tras) {
     quadrado_ant[0] = frente;
@@ -198,7 +206,7 @@ public:
 
   /* Verifica a troca de quadrado */
   bool troca_quadrado(int f_atual, int t_atual) {
-    if (f_atual <= quadrado_ant[0] - 300 || t_atual >= quadrado_ant[1] + 300) {  // Troca pelas distancias
+    if (f_atual <= quadrado_ant[0] - 45 || t_atual >= quadrado_ant[1] + 45) {  // Troca pelas distancias
       return true;
     } else if (troca_encoder() == true) {  // Troca pelo Encoder
       return true;
@@ -207,20 +215,22 @@ public:
     }
   }
 
-  /*Correcao do angulo do robo a cada parada*/
-  void correcao(float angulo) {
+  /******* CORREÇÃO *******/
 
+  /*Correcao do angulo do robo a cada parada*/
+  void correcao() {
+    float ang = angulo();
     //Parte 1 alinha o robo com a parede
     int aux[] = { 300, 300, 300, 300 };  // Inicia com valores para esquerda
     sensores.zerar_mpu();
 
     //Ajuste para esquerda
-    if (angulo <= -10.0) {
+    if (ang <= -10.0) {
       while (sensores.angulo_mpu() < 0) {
         motores.potencia(aux);
       }
     }  //Ajuste para direita
-    else if (angulo >= 10.0) {
+    else if (ang >= 10.0) {
       aux[0] = -300;
       aux[1] = -300;
       aux[2] = -300;
@@ -230,12 +240,29 @@ public:
       }
     }
     sensores.zerar_mpu();
+  }
 
-    /*Parte 2, Caso o Robo esteja muito distante do centro
-    do quarado, ajustamos sua trajetoria em uma diagonal para voltar ao centro*/ 
-     if (dist[1] % 30 < 10) {
+  /*Cálculo do comprimento da nova trajetória
+    e do angulo para atingi-la */
+  void correcao_trajetoria() {
+    int a;
+    int aux[] = { 300, 300, 300, 300 };  // Inicia com valores para esquerda
 
+    //Escolhemos o lado mais proximo e verificamos se ele é coerente
+    if (dist[1] < dist[5] && dist[5] != -1) {  //Próximo da esquerda
+      a = (15 - (dist[1] % 30));
+      aux[0] = -300;
+      aux[1] = -300;
+      aux[2] = -300;
+      aux[3] = -300;
     }
+
+    if (dist[5] < dist[1] && dist[1] != -1) {  //Próximo da direita
+      a = (15 - (dist[5] % 30));
+    }
+
+    //Nova distancia a ser percorrida (Deve ser passada para a troca)
+    trajetoria = sqrt(pow(a, 2) + pow(30, 2));  // Calculate the hypotenuse
   }
 };
 #endif

@@ -28,8 +28,9 @@ public:
     //Cordenadas de inicio
     mapa.save_cord();
 
-    //Se estiver muito fora do centro do quadrado
-    op.correcao(op.angulo());
+    //Ajusta o robo no próprio eixo
+    op.correcao();
+    op.correcao_trajetoria();
 
     //Parametros para troca
     op.ler_distancias();
