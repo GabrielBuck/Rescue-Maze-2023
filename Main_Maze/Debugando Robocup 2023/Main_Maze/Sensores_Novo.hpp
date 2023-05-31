@@ -6,10 +6,12 @@
 #include <Adafruit_MLX90614.h> /*!< Inclusão da biblioteca do MLX */
 
 
-#define MAX_DISTANCE 200  //Distancia Maxima (em cm).
-#define TIMEOUT 50000     //Tempo maximo de espera para o retorno do pulso do ultrassonico.
-#define OFFSET 0.85//0.88       /*!< Define o valor de correcao para MPU */
-#define DIMENSIONAL 6.8     /*!< Define uma constante de correcao para MPU*/
+#define MAX_DISTANCE 200 /*!<Distancia Maxima (em cm).*/
+#define TIMEOUT 50000    /*!<Tempo maximo de espera para o retorno do pulso do ultrassonico.*/
+#define OFFSET 0.85      //0.88 /*!< Valor de correcao para MPU */
+#define DIMENSIONAL 6.8  /*!< Constante de correcao para MPU*/
+#define CIR_RODA 20.0    /*!< Circunferencia da roda*/
+#define NUM_ENCODER 20.0 /*!< Numero de ranhuras no Encode*/
 
 MPU6050 gyroscope;
 
@@ -126,6 +128,7 @@ public:
   bool passo;
   int passos;
   bool ultimo_passo;
+  float passos_cm;
 
   /*!< Inicializa o encoder >*/
   void begin_enconder() {
@@ -139,13 +142,17 @@ public:
       passos++;
       passo = ultimo_passo;
     }
-    return passos;
+
+    //Convertemos os passos para centimetros
+    passos_cm = passos * (CIR_RODA / NUM_ENCODER) ;
+    return passos_cm;
   }
 
   /*!< Zera todos parametros para o Encoder >*/
   bool zerar_encoder() {
     ultimo_passo = passo;
     passos = 0;
+    passos_cm = 0.0;
   }
   /***************** MLX TEMPERATURA *****************/
 };

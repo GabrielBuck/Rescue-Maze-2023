@@ -134,9 +134,9 @@ public:
 
 
 
-  /************************** MOVIMENTACAO ******************************/
+  /********************************************************************* MOVIMENTACAO ********************************************************************/
 
-  /****** BÁSICAS ******/
+  /**************************************** BÁSICAS ****************************************/
 
   /*! Girar o Robo */
   void girar(int com) {
@@ -168,7 +168,7 @@ public:
 
   /*! Volta de re quando entramos em um quadrado preto*/
   void sair_preto() {
-    motores.mesma_potencia(-500);
+    motores.mesma_potencia(-300);
   }
 
   /*! Espera 5 seg no azul*/
@@ -182,10 +182,7 @@ public:
     motores.mesma_potencia(velocidade, diferenca_lateral);
   }
 
-  /****** TROCA DE QUADRADO ******/
-  //Distância 
-   int trajetoria = 30;
-
+  /****************************************** TROCA DE QUADRADO *********************************************/
 
   /*! São definidos os parametros de distancia e do Encoder, para a troca*/
   void setar_quadrado(int frente, int tras) {
@@ -196,7 +193,7 @@ public:
 
   /*Um dos parametros da troca*/
   bool troca_encoder() {
-    if (sensores.ler_encoder() >= NUM_PASSOS) {  //Checa se foram passos suficientes
+    if (sensores.ler_encoder() >= trajetoria) {  //Checa se foram passos suficientes
       sensores.zerar_encoder();
       return true;
     } else {
@@ -215,7 +212,7 @@ public:
     }
   }
 
-  /******* CORREÇÃO *******/
+  /************************************ CORREÇÃO *********************************************/
 
   /*Correcao do angulo do robo a cada parada*/
   void correcao() {
@@ -242,15 +239,12 @@ public:
     sensores.zerar_mpu();
   }
 
-  /*Cálculo do comprimento da nova trajetória
-    e do angulo para atingi-la */
+  /*AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA */
   void correcao_trajetoria() {
-    int a;
     int aux[] = { 300, 300, 300, 300 };  // Inicia com valores para esquerda
 
     //Escolhemos o lado mais proximo e verificamos se ele é coerente
     if (dist[1] < dist[5] && dist[5] != -1) {  //Próximo da esquerda
-      a = (15 - (dist[1] % 30));
       aux[0] = -300;
       aux[1] = -300;
       aux[2] = -300;
@@ -258,11 +252,30 @@ public:
     }
 
     if (dist[5] < dist[1] && dist[1] != -1) {  //Próximo da direita
-      a = (15 - (dist[5] % 30));
+    }
+  }
+
+  int trajetoria = 30.0;
+  
+  /*Cálculo do comprimento da nova trajetória */
+  void calcular_trajetoria() {
+
+    int cateto;
+
+    //Escolhemos o lado mais proximo e verificamos se ele é coerente
+    if (dist[1] - dist[5] <= -5 && dist[5] != -1) {  //Próximo da esquerda
+      cateto = (15 - (dist[1] % 30));
+    }
+
+    else if (dist[5] < dist[1] <= -5 && dist[1] != -1) {  //Próximo da direita
+      cateto = (15 - (dist[5] % 30));
+    }
+    //Caso nao nescessite de correcao
+    else {
     }
 
     //Nova distancia a ser percorrida (Deve ser passada para a troca)
-    trajetoria = sqrt(pow(a, 2) + pow(30, 2));  // Calculate the hypotenuse
+    trajetoria = sqrt(pow(cateto, 2) + pow(30, 2));  // Calculate the hypotenuse
   }
 };
 #endif

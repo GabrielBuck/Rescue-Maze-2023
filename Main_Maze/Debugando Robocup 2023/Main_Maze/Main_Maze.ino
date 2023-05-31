@@ -13,11 +13,11 @@
 #include "Mapa.hpp"
 
 Mapa mapa_;
-Estrategia estra;
+Estrategia estrategia;
 
 /*!<********** Declaração de todas variaveis ***********/
 
-/*!<********** Protótipo das Funções ***********/
+/*!<******** Protótipo das Funções **********/
 char comando_manual();
 
 /*!< ************** Setup do Código *******************/
@@ -33,34 +33,38 @@ void setup() {
 /****************** Inicio do Loop *************************/
 void loop() {
 
-  //Frente
-  if (comando_manual() == 'F') {
+  //Teste manual (Essas informacoes devem vir da Decisao)
+  char comando = comando_manual();
+  char ori = comando_manual();
+  bool busca = comando_manual();
 
-    
-    Serial.println("Frente!!");
-    //Cordenadas de inicio
-    mapa_.save_cord();
-    mapa_.recebe_passagens_cor(op.passagens, op.cor());
-    mapa_.orientacao(ori);
-    mapa_.move_cordenada(false, false);
-    mapa_.imprimir();
+  //Frente
+  if (comando == 'F') {
+    estrategia.frente(ori, busca);
   }
   //Start
-  else if (comando_manual() == 'S') {
+  else if (comando == 'S') {
+    estrategia.iniciar();
+  }
+  //Agua
+  else if (comando == 'P') {
+  }
 
-    Serial.println("Comecei o mapa");
-    //Cordenadas de inicio
-    mapa_.save_cord();
-    mapa_.recebe_passagens_cor(op.passagens, op.cor());
-    mapa_.orientacao(ori);
-    mapa_.imprimir();
+  //Giro para Esquerda
+  else if (comando == 'E') {
+    estrategia.giro(comando);
+  }
+
+  //Giro para Esquerda
+  else if (comando == 'D') {
+    estrategia.giro(comando);
   }
 }
 
 
 /*!<********** Declaração das Funções ***********/
 
-/*! Recebe o comando pela porta Serial*/
+/*! Recebe o comando e orientacao pela porta Serial*/
 char comando_manual() {
 
   char input;

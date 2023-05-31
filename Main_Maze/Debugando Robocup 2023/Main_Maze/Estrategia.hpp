@@ -23,7 +23,7 @@ public:
 
 
   /*! Movimentamos 1 quadrado para Frente */
-  void frente(int ori) {
+  void frente(int ori, bool busca) {
 
     //Cordenadas de inicio
     mapa.save_cord();
