@@ -26,27 +26,31 @@ public:
   void frente(int ori, bool busca) {
 
     //Cordenadas de inicio
-    mapa.save_cord();
+    //mapa.save_cord();
 
     //Ajusta o robo no próprio eixo
-    op.correcao();
-    op.correcao_trajetoria();
+    //op.correcao();
+    //op.correcao_trajetoria();
 
     //Parametros para troca
-    op.ler_distancias();
-    op.setar_quadrado(op.dist[0], op.dist[3]);
+    //op.ler_distancias();
+    //op.setar_quadrado(op.dist[0], op.dist[3]);
 
     //Loop ate a troca de quadrado
-    while (op.troca_quadrado(op.dist[0], op.dist[3]) == false) {
+    //while (op.troca_quadrado(op.dist[0], op.dist[3]) == false) {
 
-      op.ler_distancias();
+    //  op.ler_distancias();
+    op.begin();
+    while (true) {
       op.movimento(500);
+      
     }
+    //}
 
-    op.medir_passagens();
-    mapa.recebe_passagens_cor(op.passagens, op.cor());
-    mapa.orientacao(ori);
-    mapa.move_cordenada(false, false);
+    //op.medir_passagens();
+    //mapa.recebe_passagens_cor(op.passagens, op.cor());
+    //mapa.orientacao(ori);
+    //mapa.move_cordenada(false, false);
     //mapa.imprimir();
   }
 

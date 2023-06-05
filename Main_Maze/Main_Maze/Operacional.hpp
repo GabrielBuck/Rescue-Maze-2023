@@ -6,13 +6,12 @@ e o funcionamento dos Atuadores.
 As funcoes dessa classe ainda nao sao as ideias para utilizicacao no codigo main*/
 
 /*!< Incluindo classes */
-#include "Motor_Novo.hpp"
-//#include "Motor.hpp"
+//#include "Motor_Novo.hpp"
+#include "Motor.hpp"
 #include "Sensores_Novo.hpp"
 #include "PID.hpp"
 
-Motor_Novo motores;
-//Motor motores;
+Motor motores;
 Sensores sensores;
 
 #define CIRCUNFERENCIA_RODA 20

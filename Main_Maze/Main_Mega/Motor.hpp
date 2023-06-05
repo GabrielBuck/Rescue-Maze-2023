@@ -70,12 +70,13 @@ public:
         vel[i] = -1000;
       }
     }
+
+
     //Cada valor recebe sua respectiva velocidade
     motore1.speed(vel[0]);
     motore2.speed(vel[1]);
     motord1.speed(vel[2]);
     motord2.speed(vel[3]);
   }
-  
 };
 #endif

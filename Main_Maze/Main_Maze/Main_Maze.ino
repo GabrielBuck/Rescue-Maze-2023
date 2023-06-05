@@ -24,6 +24,7 @@ char comando_manual();
 void setup() {
 
   Serial.begin(9600);
+  Serial3.begin(9600);
   Serial.println("Iniciei");
   /*!< Inicializacoes nescessarias >!*/
 }
@@ -34,13 +35,18 @@ void setup() {
 void loop() {
 
   //Teste manual (Essas informacoes devem vir da Decisao)
-  char comando = comando_manual();
-  char ori = comando_manual();
-  bool busca = comando_manual();
+  //Serial.println("ME MANDA O COMANDO");
+  //char comando = comando_manual();
+  int ori = 0;         //comando_manual();
+  bool busca = false;  //comando_manual();
 
+  Serial.println("Frente!!");
+  estrategia.frente(ori, busca);
   //Frente
-  if (comando == 'F') {
+  /* if (comando == 'F') {
     estrategia.frente(ori, busca);
+    Serial.println("Frente!!");
+
   }
   //Start
   else if (comando == 'S') {
@@ -58,7 +64,7 @@ void loop() {
   //Giro para Esquerda
   else if (comando == 'D') {
     estrategia.giro(comando);
-  }
+  }*/
 }
 
 
