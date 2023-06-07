@@ -11,9 +11,13 @@
 #include "Operacional.hpp"
 #include "Estrategia.hpp"
 #include "Mapa.hpp"
+#include "Comunicacao.hpp"
 
+//Comunicacao com_;
 Mapa mapa_;
 Estrategia estrategia;
+Motor socorro;
+Operacional op1;
 
 /*!<********** Declaração de todas variaveis ***********/
 
@@ -30,7 +34,8 @@ void setup() {
 }
 
 
-
+int aux[4] = {500, 500, -500, -500};
+int aux2 = 500;
 /****************** Inicio do Loop *************************/
 void loop() {
 
@@ -39,8 +44,9 @@ void loop() {
   //char comando = comando_manual();
   int ori = 0;         //comando_manual();
   bool busca = false;  //comando_manual();
-
-  Serial.println("Frente!!");
+  //Serial.println("Frente!!");
+  //com_.envio_motores(aux);
+  //op1.movimento(1000);
   estrategia.frente(ori, busca);
   //Frente
   /* if (comando == 'F') {

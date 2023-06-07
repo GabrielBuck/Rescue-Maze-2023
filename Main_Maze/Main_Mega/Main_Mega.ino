@@ -21,11 +21,11 @@ void setup() {
   Serial2.begin(9600);
   Serial.println("Iniciei MEGA");
   motores.begin();
-
 }
 
 
 void loop() {
+
   recebe_serial();
   motores.potencia(potencias);
 }
@@ -34,21 +34,20 @@ void loop() {
 /*!Recebe valores dos motores atraves da porta Serial*/
 void recebe_serial() {
 
-  if (Serial2.available()) {
+  for (int i = 0; i < 4; i++) {
 
-    Serial.println("AAAAAAAAAAA");
+    String recebe = "";
 
-    for (int i = 0; i < 4; i++) {
-      potencias[i] = Serial2.parseInt();  // Read the next integer from serial
-      Serial2.read();                     // Consume the space delimiter
+    //Le cada caracter rcebido e concatena eles em uma String
+    while (Serial2.available() > 0) {
+      char a = Serial2.read();
+      //Serial.println(a);
+      //Serial.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+      if (a != '\0') recebe.concat(a);
     }
-
-
-    //Print the received numbers to the Serial Monitor
-    for (int i = 0; i < 4; i++) {
-      Serial.print(potencias[i]);
-      Serial.print(" ");
-    }
-    Serial.println();
+    potencias[i] = recebe.toInt();
+    Serial.println(potencias[i]);
+    delay(500);
   }
+  Serial.println("-----------------");
 }

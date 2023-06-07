@@ -40,10 +40,9 @@ public:
     //while (op.troca_quadrado(op.dist[0], op.dist[3]) == false) {
 
     //  op.ler_distancias();
-    op.begin();
+    //op.begin();
     while (true) {
       op.movimento(500);
-      
     }
     //}
 

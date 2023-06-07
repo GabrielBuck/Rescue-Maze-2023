@@ -38,6 +38,7 @@ public:
     //Serial.println(vel[1]);
     //Serial.println(vel[2]);
     //Serial.println(vel[3]);
+    //int teste[4] = {500, 500, 500, 500};
     com.envio_motores(vel);
 
   }
