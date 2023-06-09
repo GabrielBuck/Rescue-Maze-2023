@@ -27,27 +27,81 @@ void setup() {
 void loop() {
 
   recebe_serial();
-  motores.potencia(potencias);
 }
 
 
 /*!Recebe valores dos motores atraves da porta Serial*/
 void recebe_serial() {
+  if (Serial2.available() && Serial2.read() == 'i') {
+    char buff[30];
+    byte buff_control = 0;
 
-  for (int i = 0; i < 4; i++) {
-
-    String recebe = "";
-
-    //Le cada caracter rcebido e concatena eles em uma String
-    while (Serial2.available() > 0) {
-      char a = Serial2.read();
-      //Serial.println(a);
-      //Serial.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-      if (a != '\0') recebe.concat(a);
+    while (1) {
+      if (Serial2.available()) {
+        buff[buff_control] = Serial2.read();
+        if (buff[buff_control] == 'p') break;
+        if (buff[buff_control] == 'i') buff_control = 0;
+        buff_control++;
+        if (buff_control >= 26)
+          ;
+      }
     }
-    potencias[i] = recebe.toInt();
-    Serial.println(potencias[i]);
-    delay(500);
+
+    if (buff_control < 26) {
+      buff_control = 0;
+      for (int i = 0; i < 4; i++){
+
+        String recebe = "";
+
+
+      while (buff[buff_control] != '\n') {
+
+        recebe.concat(buff[buff_control]);
+        buff_control++;
+      }
+      buff_control++;
+      potencias[i] = recebe.toInt();
+      Serial.println(potencias[i]);
+    }
+    motores.potencia(potencias);
+    Serial.println("-----------------");
   }
-  Serial.println("-----------------");
+}
+
+
+
+
+
+
+
+
+
+
+/*while(Serial2.available()){
+    if(Serial2.read() == 'i')break;
+  }
+  if (Serial2.available()) {
+    
+
+    
+   
+      for (int i = 0; i < 4; i++) {
+
+        String recebe = "";
+        while(!Serial2.available());
+        //Le cada caracter rcebido e concatena eles em uma String
+        while (Serial2.available()) {
+          char a = Serial2.read();
+          if (a == 'i') i = 0;
+          //Serial.println(a);
+          //Serial.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+          if (a == '\n') break;
+          recebe.concat(a);
+          if(!Serial2.available())delay();
+        }
+        potencias[i] = recebe.toInt();
+        Serial.println(potencias[i]);
+      }
+      Serial.println("-----------------");
+    }*/
 }

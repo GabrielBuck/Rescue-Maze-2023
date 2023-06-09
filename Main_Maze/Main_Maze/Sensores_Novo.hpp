@@ -20,8 +20,8 @@ MPU6050 gyroscope;
 Ultrasonic direita_f(48, 50, TIMEOUT);
 Ultrasonic direita_t(38, 40, TIMEOUT);
 //Ultrasonic tras(12, 13, TIMEOUT);
-Ultrasonic esquerda_t(26, 32, TIMEOUT);
-Ultrasonic esquerda_f(28, 30, TIMEOUT);
+Ultrasonic esquerda_f(26, 32, TIMEOUT);
+Ultrasonic esquerda_t(28, 30, TIMEOUT);
 
 class Sensores {
 

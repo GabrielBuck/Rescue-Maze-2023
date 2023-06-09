@@ -33,7 +33,7 @@ public:
 
   /*! Funcao que inicializa todas variaveis e itens nescesarrios para o funcionamento dos motores */
   void begin() {
-
+    Serial3.begin(1000000);
     interface.begin(baudrate);
 
     // Verifica se foi estabelecida a conexao

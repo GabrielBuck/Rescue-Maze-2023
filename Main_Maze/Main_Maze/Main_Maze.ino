@@ -31,6 +31,7 @@ void setup() {
   Serial3.begin(9600);
   Serial.println("Iniciei");
   /*!< Inicializacoes nescessarias >!*/
+  //estra.begin();
 }
 
 

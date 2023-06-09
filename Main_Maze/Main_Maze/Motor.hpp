@@ -15,7 +15,7 @@ public:
   /*! Funcao que coloca todos motores na mesma velocidade, e realiza seus espelhamentos*/
   void mesma_potencia(int vel, int dif_lado = 0) {
     //Caso normal da movimentacao
-    int aux[4] = { -(vel - dif_lado), -(vel - dif_lado), (vel + dif_lado), (vel + dif_lado) };
+    int aux[4] = { (vel - dif_lado) * 0, (vel - dif_lado) * 0 , -(vel + dif_lado) , -(vel + dif_lado) };
     potencia(aux);  //E enviado para os motores os valores de correcao
   }
 
@@ -33,14 +33,8 @@ public:
         vel[i] = -1000;
       }
     }
-
-    //Serial.println(vel[0]);
-    //Serial.println(vel[1]);
-    //Serial.println(vel[2]);
-    //Serial.println(vel[3]);
-    //int teste[4] = {500, 500, 500, 500};
+    //Comunica valores dos motores paara o Mega
     com.envio_motores(vel);
-
   }
 };
 #endif
