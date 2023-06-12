@@ -39,8 +39,8 @@ public:
     //Loop ate a troca de quadrado
     //while (op.troca_quadrado(op.dist[0], op.dist[3]) == false) {
 
-      //op.ler_distancias();
-      op.movimento(500);
+    //op.ler_distancias();
+    op.movimento(500);
     //}
 
     //op.medir_passagens();

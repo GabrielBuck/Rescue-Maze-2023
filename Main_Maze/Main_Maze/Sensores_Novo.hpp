@@ -8,8 +8,8 @@
 
 #define MAX_DISTANCE 200 /*!<Distancia Maxima (em cm).*/
 #define TIMEOUT 50000    /*!<Tempo maximo de espera para o retorno do pulso do ultrassonico.*/
-#define OFFSET 0.85      //0.88 /*!< Valor de correcao para MPU */
-#define DIMENSIONAL 6.8  /*!< Constante de correcao para MPU*/
+#define OFFSET 0.86      //0.88 /*!< Valor de correcao para MPU */
+#define DIMENSIONAL 1.007  // 6.8  /*!< Constante de correcao para MPU*/
 #define CIR_RODA 20.0    /*!< Circunferencia da roda*/
 #define NUM_ENCODER 20.0 /*!< Numero de ranhuras no Encode*/
 
@@ -27,13 +27,15 @@ class Sensores {
 
 private:
 
-  float ultima_passagem = 0;  //Usada na medicao do tempo
-  float angulo_z = 0;         // Angulo atual
+  float ultima_passagem = 0.0;  //Usada na medicao do tempo
+  float angulo_z = 0.0;         // Angulo atual
+  float tempo_atual = 0.0;
+  float tempo_decorrido = 0.0;
 
   /*!<Retorna intervalo de tempo entre as chamadas*/
   float tempo() {
-    float tempo_atual = (float)micros() / 1000000.0;
-    float tempo_decorrido = tempo_atual - ultima_passagem;
+    tempo_atual = (float)micros() / 1000000.0;
+    tempo_decorrido = tempo_atual - ultima_passagem;
     ultima_passagem = tempo_atual;
     return tempo_decorrido;
   }
@@ -68,27 +70,16 @@ public:
     angulo_z += ((gyroscope.z_gyro() - OFFSET) * DIMENSIONAL) * tempo();
     Serial.print("Z ang: ");
     Serial.print(gyroscope.z_gyro());
-    /*Serial.print(" X ang: ");
-    Serial.print(gyroscope.x_gyro());
-    Serial.print(" Y ang: ");
-    Serial.print(gyroscope.y_gyro());
-    Serial.print(" X Acel: ");
-    Serial.print(gyroscope.x_accel());
-    Serial.print(" Y Acel: ");
-    Serial.print(gyroscope.y_accel());
-    Serial.print(" Z Acel: ");
-    Serial.print(gyroscope.z_accel());*/
     Serial.print(" Angulo: ");
-    Serial.print(angulo_z);
-    Serial.print(" Tempo: ");
-    Serial.println(tempo());
+    Serial.println(angulo_z);
     return angulo_z;
   }
 
   /*!< Funcao que zera as referencia da MPU*/
   void zerar_mpu() {
-    ultima_passagem = millis();
-    angulo_z = 0;
+
+    ultima_passagem = (float)micros() / 1000000.0;
+    angulo_z = 0.0;
   }
 
 
@@ -144,7 +135,7 @@ public:
     }
 
     //Convertemos os passos para centimetros
-    passos_cm = passos * (CIR_RODA / NUM_ENCODER) ;
+    passos_cm = passos * (CIR_RODA / NUM_ENCODER);
     return passos_cm;
   }
 

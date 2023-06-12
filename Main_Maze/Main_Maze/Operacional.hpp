@@ -40,9 +40,8 @@ public:
 
   /*! Inicializacao dos Motores e Sensores*/
   void begin() {
-    sensores.begin_enconder();
+    //sensores.begin_enconder();
     sensores.begin_mpu();
-    motores.begin();
   }
   /**************** CORES *****************/
   char cor() {
@@ -79,6 +78,7 @@ public:
       Serial.print(":");
       Serial.println(dist[i]);
     }
+    Serial.println("--------------");
   }
 
   /*! Verifica a existencia de passagens nas quatro direcoes*/
@@ -138,25 +138,26 @@ public:
   /**************************************** BÁSICAS ****************************************/
 
   /*! Girar o Robo */
-  void girar(int com) {
-    int aux[] = { 500, 500, 500, 500 };  // Inicia com valores de 'E'
+  void girar(char com) {
+    int aux[] = { -500, -500, -500, -500 };  // Inicia com valores de 'E'
     sensores.zerar_mpu();
 
     //Esquerda
     if (com == 'E') {
-      while (sensores.angulo_mpu() > -90) {
+      while (sensores.angulo_mpu() <= 720) {
         motores.potencia(aux);
       }
       //Direita
     } else if (com == 'D') {
-      aux[0] = -500;
-      aux[1] = -500;
-      aux[2] = -500;
-      aux[3] = -500;
-      while (sensores.angulo_mpu() < 90) {
+      aux[0] = 500;
+      aux[1] = 500;
+      aux[2] = 500;
+      aux[3] = 500;
+      while (sensores.angulo_mpu() >= -720) {
         motores.potencia(aux);
       }
     }
+    parar();
     sensores.zerar_mpu();
   }
 
@@ -177,7 +178,7 @@ public:
   }
 
   /*! Movimenta o robo para frente*/
-  void movimento(int velocidade = 500, int diferenca_lateral = 0, int quadrados = 1) {
+  void movimento(int velocidade = 500, int diferenca_lateral = 0) {
     motores.mesma_potencia(velocidade, diferenca_lateral);
   }
 
@@ -202,10 +203,10 @@ public:
 
   /* Verifica a troca de quadrado */
   bool troca_quadrado(int f_atual, int t_atual) {
-    if (f_atual <= quadrado_ant[0] - 45 || t_atual >= quadrado_ant[1] + 45) {  // Troca pelas distancias
+    if (f_atual <= quadrado_ant[0] - 35 || t_atual >= quadrado_ant[1] + 35) {  // Troca pelas distancias
       return true;
-    } else if (troca_encoder() == true) {  // Troca pelo Encoder
-      return true;
+      //} else if (troca_encoder() == true) {  // Troca pelo Encoder
+      //return true;
     } else {  // Nao houve troca
       return false;
     }
@@ -255,7 +256,7 @@ public:
   }
 
   int trajetoria = 30.0;
-  
+
   /*Cálculo do comprimento da nova trajetória */
   void calcular_trajetoria() {
 

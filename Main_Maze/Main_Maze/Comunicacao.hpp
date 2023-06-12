@@ -16,7 +16,7 @@ public:
 
     Serial3.print('i');
 
-    for(byte i = 0; i < 4 ; i++){
+    for (byte i = 0; i < 4; i++) {
       Serial3.println(pot_int[i]);
       Serial.println(pot_int[i]);
     }

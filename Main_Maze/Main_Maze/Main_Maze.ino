@@ -16,8 +16,6 @@
 //Comunicacao com_;
 Mapa mapa_;
 Estrategia estrategia;
-Motor socorro;
-Operacional op1;
 
 /*!<********** Declaração de todas variaveis ***********/
 
@@ -27,30 +25,24 @@ char comando_manual();
 /*!< ************** Setup do Código *******************/
 void setup() {
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial3.begin(9600);
   Serial.println("Iniciei");
   /*!< Inicializacoes nescessarias >!*/
-  //estra.begin();
+  estrategia.iniciar();
 }
 
-
-int aux[4] = {500, 500, -500, -500};
-int aux2 = 500;
 /****************** Inicio do Loop *************************/
 void loop() {
 
   //Teste manual (Essas informacoes devem vir da Decisao)
-  //Serial.println("ME MANDA O COMANDO");
-  //char comando = comando_manual();
+  Serial.println("ME MANDA O COMANDO");
+  char comando = comando_manual();
   int ori = 0;         //comando_manual();
   bool busca = false;  //comando_manual();
-  //Serial.println("Frente!!");
-  //com_.envio_motores(aux);
-  //op1.movimento(1000);
-  estrategia.frente(ori, busca);
+  
   //Frente
-  /* if (comando == 'F') {
+   if (comando == 'F') {
     estrategia.frente(ori, busca);
     Serial.println("Frente!!");
 
@@ -71,7 +63,7 @@ void loop() {
   //Giro para Esquerda
   else if (comando == 'D') {
     estrategia.giro(comando);
-  }*/
+  }
 }
 
 
