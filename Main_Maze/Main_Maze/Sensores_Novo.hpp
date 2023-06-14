@@ -8,8 +8,8 @@
 
 #define MAX_DISTANCE 200 /*!<Distancia Maxima (em cm).*/
 #define TIMEOUT 50000    /*!<Tempo maximo de espera para o retorno do pulso do ultrassonico.*/
-#define OFFSET 0.86      //0.88 /*!< Valor de correcao para MPU */
-#define DIMENSIONAL 1.007  // 6.8  /*!< Constante de correcao para MPU*/
+#define OFFSET 0.91      //0.88 /*!< Valor de correcao para MPU */
+#define DIMENSIONAL 1.014  // 6.8  /*!< Constante de correcao para MPU*/
 #define CIR_RODA 20.0    /*!< Circunferencia da roda*/
 #define NUM_ENCODER 20.0 /*!< Numero de ranhuras no Encode*/
 
@@ -89,10 +89,9 @@ public:
       sem NENHUM tipo de interferencia ate o fim da calibracao.
       Ao fim da medicao subistituir a constante OFFSET pelo novo valor*/
   void calibrar_offset() {
-    double offset;
-    for (int i = 0; i < 10000; i++) {
-      offset = offset + gyroscope.z_gyro();
-      offset = offset / 2;
+    float offset;
+    for (float i = 1; i < 10000; i++) {
+      offset += (gyroscope.z_gyro() - offset)/i;
       Serial.println(i);
     }
     Serial.print("Offset estimado: ");

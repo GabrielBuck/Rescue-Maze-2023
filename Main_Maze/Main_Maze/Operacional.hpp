@@ -62,7 +62,10 @@ public:
   void setar_PID_diagonal(int setpoint = 0) {
     pidG.setSetpoint(setpoint);
   }
-
+  /******************** ANGULO **********************/
+  void zerar_mpu(){
+    sensores.zerar_mpu();
+  }
   /******************** DISTANCIAS **********************/
   int dist[6];
   bool passagens[4];
@@ -144,7 +147,7 @@ public:
 
     //Esquerda
     if (com == 'E') {
-      while (sensores.angulo_mpu() <= 720) {
+      while (sensores.angulo_mpu() <= 90) {
         motores.potencia(aux);
       }
       //Direita
@@ -153,8 +156,9 @@ public:
       aux[1] = 500;
       aux[2] = 500;
       aux[3] = 500;
-      while (sensores.angulo_mpu() >= -720) {
+      while (sensores.angulo_mpu() >= -90) {
         motores.potencia(aux);
+        //sensores.calibrar_offset();
       }
     }
     parar();
@@ -178,7 +182,8 @@ public:
   }
 
   /*! Movimenta o robo para frente*/
-  void movimento(int velocidade = 500, int diferenca_lateral = 0) {
+  void movimento(int velocidade = 500) {
+    int diferenca_lateral = pidG.calcular(sensores.angulo_mpu())
     motores.mesma_potencia(velocidade, diferenca_lateral);
   }
 
@@ -218,7 +223,7 @@ public:
   void correcao() {
     float ang = angulo();
     //Parte 1 alinha o robo com a parede
-    int aux[] = { 300, 300, 300, 300 };  // Inicia com valores para esquerda
+    int aux[] = { -300, -300, -300, -300 };  // Inicia com valores para esquerda
     sensores.zerar_mpu();
 
     //Ajuste para esquerda
@@ -228,10 +233,10 @@ public:
       }
     }  //Ajuste para direita
     else if (ang >= 10.0) {
-      aux[0] = -300;
-      aux[1] = -300;
-      aux[2] = -300;
-      aux[3] = -300;
+      aux[0] = 300;
+      aux[1] = 300;
+      aux[2] = 300;
+      aux[3] = 300;
       while (sensores.angulo_mpu() < 0) {
         motores.potencia(aux);
       }

@@ -25,8 +25,8 @@ char comando_manual();
 /*!< ************** Setup do Código *******************/
 void setup() {
 
-  Serial.begin(115200);
-  Serial3.begin(9600);
+  Serial.begin(250000);
+  Serial3.begin(250000);
   Serial.println("Iniciei");
   /*!< Inicializacoes nescessarias >!*/
   estrategia.iniciar();

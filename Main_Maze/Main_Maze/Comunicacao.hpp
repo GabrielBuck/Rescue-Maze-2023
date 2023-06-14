@@ -12,7 +12,6 @@ private:
 public:
 
   void envio_motores(int pot_int[4]) {
-    delay(50);
 
     Serial3.print('i');
 

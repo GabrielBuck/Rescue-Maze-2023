@@ -36,6 +36,7 @@ public:
     //op.ler_distancias();
     //op.setar_quadrado(op.dist[0], op.dist[3]);
 
+    op.zerar_mpu();
     //Loop ate a troca de quadrado
     //while (op.troca_quadrado(op.dist[0], op.dist[3]) == false) {
 
