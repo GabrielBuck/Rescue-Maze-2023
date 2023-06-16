@@ -32,7 +32,7 @@ void setup() {
   estrategia.iniciar();
 }
 
-/****************** Inicio do Loop *************************/
+/****************** Inicio do Loop ********************/
 void loop() {
 
   //Teste manual (Essas informacoes devem vir da Decisao)

@@ -1,7 +1,6 @@
 #ifndef Sensores_hpp
 #define Sensores_hpp
 
-#include <Ultrasonic.h>        /*!< Inclusão da biblioteca do Ultrassonico link: "https://github.com/ErickSimoes/Ultrasonic/blob/master/"*/
 #include <MPU6050.h>           /*!< Inclusão da biblioteca do MPU */
 #include <Adafruit_MLX90614.h> /*!< Inclusão da biblioteca do MLX */
 
@@ -68,10 +67,10 @@ public:
   /*!<Retorna o angulo atual da MPU*/
   float angulo_mpu() {
     angulo_z += ((gyroscope.z_gyro() - OFFSET) * DIMENSIONAL) * tempo();
-    Serial.print("Z ang: ");
-    Serial.print(gyroscope.z_gyro());
-    Serial.print(" Angulo: ");
-    Serial.println(angulo_z);
+    //Serial.print("Z ang: ");
+    //Serial.print(gyroscope.z_gyro());
+    //Serial.print(" Angulo: ");
+    //Serial.println(angulo_z);
     return angulo_z;
   }
 

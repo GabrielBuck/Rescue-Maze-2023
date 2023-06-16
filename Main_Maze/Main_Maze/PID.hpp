@@ -21,46 +21,65 @@
 class PID {
 
 private:
-  double kp;             // Proportional gain
-  double ki;             // Integral gain
-  double kd;             // Derivative gain
-  double setpoint;       // Desired setpoint
-  double output;         // Control output
-  double integral;       // Integral term
-  double previousError;  // Previous error
+  float kp;                     // Proportional gain
+  float ki;                     // Integral gain
+  float kd;                     // Derivative gain
+  float windup;
+  float limite;
+  float setpoint;               // Desired setpoint
+  float output;                 // Control output
+  float integral;               // Integral term
+  float previousError;          // Previous error
+  float ultima_passagem = 0.0;  //Usada na medicao do tempo
+  float tempo_atual = 0.0;
+  float tempo_decorrido = 0.0;
+
 
 public:
 
   /*! Construtor que define as constantes e o set setpoint*/
-  PID(double kp, double ki, double kd, double setpoint) {
+  PID(float kp, float ki, float kd, float setpoint, float windup, float limite) {
     this->kp = kp;
     this->ki = ki;
     this->kd = kd;
+    this->windup = windup;
     this->setpoint = setpoint;
     output = 0.0;
     integral = 0.0;
     previousError = 0.0;
   }
 
+  float tempo() {
+    tempo_atual = (float)micros() / 1000000.0;
+    tempo_decorrido = tempo_atual - ultima_passagem;
+    ultima_passagem = tempo_atual;
+    return tempo_decorrido;
+  }
+
   /*!Calcula o PID*/
-  int calcular(int input) {
-    int error = setpoint - input;
+  float calcular(float input) {
+    float error = setpoint - input;
+
+    float current_time = tempo();
+
 
     // Proportional term
-    int proportional = kp * error;
+    float proportional = kp * error;
 
     // Integral term
-    integral += ki * error;
+    if (error <= windup && error >= -windup) {
+      integral += ki * error * current_time;
+    }
 
-    // Anti-windup
-    if (integral > 100) {
-      integral = 100;
-    } else if (integral < -100) {
-      integral = -100;
+    // Limitador
+    if (integral > limite) {
+      integral = limite;
+    } else if (integral < -limite) {
+      integral = -limite;
     }
 
     // Derivative term
-    int derivative = kd * (error - previousError);
+    float derivative = (kd * (error - previousError)) / current_time;
 
     // Calculate the control output
     output = proportional + integral + derivative;
@@ -71,18 +90,18 @@ public:
     return output;
   }
   /*!Zeramos todas referencias do PID chamado*/
-  void zerar(){
+  void zerar() {
     integral = 0;
     previousError = 0;
   }
 
   /*! Definir ou redefine setpoint*/
-  void setSetpoint(double setpoint) {
+  void setSetpoint(float setpoint) {
     this->setpoint = setpoint;
   }
 
   /*! Redefine as constantes*/
-  void setTunings(double kp, double ki, double kd) {
+  void setTunings(float kp, float ki, float kd) {
     this->kp = kp;
     this->ki = ki;
     this->kd = kd;

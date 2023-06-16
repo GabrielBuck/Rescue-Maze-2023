@@ -20,9 +20,9 @@ Sensores sensores;
 
 
 /*! Constroi os PIDs*/
-//KP, KI, KD, Setpoint
-PID pidG(0.5, 0.2, 0.1, 100);  //Giroscopio
-PID pidF(0.5, 0.2, 0.1, 100);  //Frontal
+//KP, KI, KD, Setpoint, windup, limite
+PID pidG(60.0, 0.1, 2.0, 0, 10, 50);  //Giroscopio
+PID pidF(0.5, 0.2, 0.1, 100, 100, 100);  //Frontal
 
 
 class Operacional {
@@ -183,7 +183,7 @@ public:
 
   /*! Movimenta o robo para frente*/
   void movimento(int velocidade = 500) {
-    int diferenca_lateral = pidG.calcular(sensores.angulo_mpu())
+    int diferenca_lateral = pidG.calcular(sensores.angulo_mpu());
     motores.mesma_potencia(velocidade, diferenca_lateral);
   }
 
@@ -202,6 +202,7 @@ public:
       sensores.zerar_encoder();
       return true;
     } else {
+
       return false;
     }
   }
@@ -237,7 +238,7 @@ public:
       aux[1] = 300;
       aux[2] = 300;
       aux[3] = 300;
-      while (sensores.angulo_mpu() < 0) {
+      while (sensores.angulo_mpu() > 0) {
         motores.potencia(aux);
       }
     }

@@ -33,7 +33,7 @@ void loop() {
 /*!Recebe valores dos motores atraves da porta Serial*/
 void recebe_serial() {
   if (Serial2.available() && Serial2.read() == 'i') {
-    char buff[30];
+    char buff[32];
     byte buff_control = 0;
     byte data_count = 0;
 
@@ -44,11 +44,11 @@ void recebe_serial() {
         if(buff[buff_control] == '\n') data_count++;
         if (buff[buff_control] == 'i') {buff_control = 0; data_count = 0;}
         buff_control++;
-        if (buff_control >= 26)break;
+        if (buff_control >= 30)break;
       }
     }
 
-    if (buff_control < 26 && data_count == 4) {
+    if (buff_control < 30 && data_count == 4) {
       buff_control = 0;
       for (int i = 0; i < 4; i++){
 

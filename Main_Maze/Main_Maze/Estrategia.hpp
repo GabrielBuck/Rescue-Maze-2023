@@ -29,21 +29,22 @@ public:
     //mapa.save_cord();
 
     //Ajusta o robo no próprio eixo
-    //op.correcao();
+    op.correcao();
     //op.correcao_trajetoria();
 
     //Parametros para troca
     //op.ler_distancias();
     //op.setar_quadrado(op.dist[0], op.dist[3]);
 
-    op.zerar_mpu();
+    //op.zerar_mpu();
     //Loop ate a troca de quadrado
     //while (op.troca_quadrado(op.dist[0], op.dist[3]) == false) {
 
     //op.ler_distancias();
-    op.movimento(500);
+    //while (1) {
+    //  op.movimento(500);
+      //}
     //}
-
     //op.medir_passagens();
     //mapa.recebe_passagens_cor(op.passagens, op.cor());
     //mapa.orientacao(ori);
