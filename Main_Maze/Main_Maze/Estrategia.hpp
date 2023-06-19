@@ -46,7 +46,7 @@ public:
       //op.ler_distancias();
       //sensores.passos = 0;
       op.movimento(500);
-      Serial.println(sensores.passos_cm);
+      //Serial.println(sensores.passos_cm);
     }
 
     op.parar();

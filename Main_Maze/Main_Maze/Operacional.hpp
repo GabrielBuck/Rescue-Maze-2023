@@ -263,24 +263,28 @@ public:
 
   /* */
   void correcao_trajetoria() {
-    int aux[] = { 200, 200, 200, 200 };  // Inicia com valores para esquerda
-    
-    sensores.zerar_mpu();
-    //
-    if () {  //Próximo da esquerda
-      aux[0] = -200;
-      aux[1] = -200;
-      aux[2] = -200;
-      aux[3] = -200;
+    int aux[] = { -200, -200, -200, -200 };  // Inicia com valores para esquerda
 
-      while (sensores.angulo_mpu() > correction_angle) {
-        motores.potencia(aux);
-      }
-    } else if (dist[5] < dist[1] && dist[5] != 0.0) {  //Próximo da direita
-      while (sensores.angulo_mpu() > correction_angle) {
+    sensores.zerar_mpu();
+
+
+    if (correction_angle < 0) {  //Direita
+      while (sensores.angulo_mpu() <= -correction_angle) {
         motores.potencia(aux);
       }
     }
+
+    else if (correction_angle > 0) {  //Eesquerda
+      aux[0] = 200;
+      aux[1] = 200;
+      aux[2] = 200;
+      aux[3] = 200;
+
+      while (sensores.angulo_mpu() >= -correction_angle) {
+        motores.potencia(aux);
+      }
+    }
+    parar();
     sensores.zerar_mpu();
   }
 
@@ -292,7 +296,7 @@ public:
 
     //Escolhemos o lado mais proximo e verificamos se ele é coerente
     if (dist[1] <= dist[5]) {  //Próximo da esquerda
-      cateto = (7 - fmod(dist[1], 30.0));
+      cateto = -(7 - fmod(dist[1], 30.0));
     }
 
     else if (dist[5] <= dist[1]) {  //Próximo da direita
@@ -306,6 +310,12 @@ public:
     //Nova distancia a ser percorrida (Deve ser passada para a troca)
     trajetoria = sqrt(pow(cateto, 2) + pow(30.0, 2));  // Calculate the hypotenuse
     correction_angle = atan(cateto / 30.0) * (180.0 / M_PI);
+    Serial.print("cateto: ");
+    Serial.println(cateto);
+    Serial.print("Trajetoria: ");
+    Serial.println(trajetoria);
+    Serial.print("Angulo estimado: ");
+    Serial.println(correction_angle);
   }
 };
 #endif
