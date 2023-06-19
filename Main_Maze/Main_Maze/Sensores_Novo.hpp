@@ -3,6 +3,7 @@
 
 #include <MPU6050.h>           /*!< Inclusão da biblioteca do MPU */
 #include <Adafruit_MLX90614.h> /*!< Inclusão da biblioteca do MLX */
+#include "Ultrassonico.hpp"  
 
 
 #define MAX_DISTANCE 200 /*!<Distancia Maxima (em cm).*/
@@ -16,11 +17,11 @@ MPU6050 gyroscope;
 
 /*Ordem dos Ultrassonicos em sentido Horário! */
 //Ultrasonic frente(12, 13, TIMEOUT);
-Ultrasonic direita_f(48, 50, TIMEOUT);
-Ultrasonic direita_t(38, 40, TIMEOUT);
+Ultrassonico direita_f(48, 50, -1.7);
+Ultrassonico direita_t(38, 40, 0.5);
 //Ultrasonic tras(12, 13, TIMEOUT);
-Ultrasonic esquerda_f(26, 32, TIMEOUT);
-Ultrasonic esquerda_t(28, 30, TIMEOUT);
+Ultrassonico esquerda_f(26, 32, -0.1);
+Ultrassonico esquerda_t(28, 30, 1.5);
 
 class Sensores {
 
@@ -42,16 +43,16 @@ private:
 public:
 
   /******************** ULTRASSONICO ********************/
-  int dist[4];  //Armazena os valores das leituras
+  float dist[6];  //Armazena os valores das leituras
 
   /*Percorre cada sensor e exibe os resultados. EM SENTIDO HORARIO!!!*/
   void ler_dist() {
     //dist[0] = frente.read();
-    dist[0] = direita_f.read();
-    dist[1] = direita_t.read();
+    dist[1] = direita_f.media(10);
+    dist[2] = direita_t.media(10);
     //dist[3] = tras.read();
-    dist[2] = esquerda_t.read();
-    dist[3] = esquerda_f.read();
+    dist[4] = esquerda_t.media(10);
+    dist[5] = esquerda_f.media(10);
   }
   /******************** MPU ***********************/
 
@@ -114,32 +115,17 @@ public:
 
   /****************** ENCODER *******************/
 
-  bool passo;
-  int passos;
-  bool ultimo_passo;
+  volatile int passos;
   float passos_cm;
 
   /*!< Inicializa o encoder >*/
-  void begin_enconder() {
-    pinMode(14, INPUT);
+  void begin_enconder() { 
   }
+ 
 
-  /*!< Faz a leitura e retorna os passos >*/
-  int ler_encoder() {
-    passo = digitalRead(14);
-    if (ultimo_passo != passo) {
-      passos++;
-      passo = ultimo_passo;
-    }
-
-    //Convertemos os passos para centimetros
-    passos_cm = passos * (CIR_RODA / NUM_ENCODER);
-    return passos_cm;
-  }
 
   /*!< Zera todos parametros para o Encoder >*/
   bool zerar_encoder() {
-    ultimo_passo = passo;
     passos = 0;
     passos_cm = 0.0;
   }

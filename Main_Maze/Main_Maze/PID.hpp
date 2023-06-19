@@ -1,22 +1,9 @@
 #ifndef PID_hpp
 #define PID_hpp
 
-/*!PID
-
-   Esta classe implementa um algoritmo de controlador PID (Proportional-Integral-Derivative)
+/*! Esta classe implementa um algoritmo de controlador PID (Proportional-Integral-Derivative)
   para sistemas de controle. Ele calcula uma saída de controle com base no erro entre um
-  ponto de ajuste desejado e o valor de entrada atual. A classe fornece flexibilidade para ajustar
-  os ganhos do controlador e defina o ponto de ajuste desejado.
-
-  Como usar:
-  1. Crie uma instância da classe PID com os ganhos e setpoint desejados.
-  2. Chame o método `calcular()` do controlador PID com o valor de entrada atual
-     para calcular a saída de controle.
-  3. Opcionalmente, ajuste os ganhos ou ponto de ajuste usando os métodos de configuração fornecidos para
-     ajustando o desempenho do controlador.
-
-  Nota: Recursos adicionais como limites de entrada/saída, prevenção de enrolamento integral,
-  ou a filtragem pode precisar ser adicionada dependendo dos requisitos específicos. */
+  ponto de ajuste desejado e o valor de entrada atual.*/
 
 class PID {
 
@@ -29,7 +16,7 @@ private:
   float setpoint;               // Desired setpoint
   float output;                 // Control output
   float integral;               // Integral term
-  float previousError;          // Previous error
+  float ErroAnterior;          // Previous erro
   float ultima_passagem = 0.0;  //Usada na medicao do tempo
   float tempo_atual = 0.0;
   float tempo_decorrido = 0.0;
@@ -46,7 +33,7 @@ public:
     this->setpoint = setpoint;
     output = 0.0;
     integral = 0.0;
-    previousError = 0.0;
+    ErroAnterior = 0.0;
   }
 
   float tempo() {
@@ -58,17 +45,17 @@ public:
 
   /*!Calcula o PID*/
   float calcular(float input) {
-    float error = setpoint - input;
+    float erro = setpoint - input;
 
-    float current_time = tempo();
+    float tempo_atual = tempo();
 
 
     // Proportional term
-    float proportional = kp * error;
+    float proportional = kp * erro;
 
     // Integral term
-    if (error <= windup && error >= -windup) {
-      integral += ki * error * current_time;
+    if (erro <= windup && erro >= -windup) {
+      integral += ki * erro * tempo_atual;
     }
 
     // Limitador
@@ -79,20 +66,20 @@ public:
     }
 
     // Derivative term
-    float derivative = (kd * (error - previousError)) / current_time;
+    float derivative = (kd * (erro - ErroAnterior)) / tempo_atual;
 
     // Calculate the control output
     output = proportional + integral + derivative;
 
-    // Update previous error
-    previousError = error;
+    // Update previous erro
+    ErroAnterior = erro;
 
     return output;
   }
   /*!Zeramos todas referencias do PID chamado*/
   void zerar() {
     integral = 0;
-    previousError = 0;
+    ErroAnterior = 0;
   }
 
   /*! Definir ou redefine setpoint*/

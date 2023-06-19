@@ -30,21 +30,26 @@ public:
 
     //Ajusta o robo no próprio eixo
     op.correcao();
-    //op.correcao_trajetoria();
+    op.calcular_trajetoria();
+    op.correcao_trajetoria();
 
     //Parametros para troca
-    //op.ler_distancias();
     //op.setar_quadrado(op.dist[0], op.dist[3]);
 
-    //op.zerar_mpu();
+    op.zerar_mpu();
+    sensores.zerar_encoder();
     //Loop ate a troca de quadrado
-    //while (op.troca_quadrado(op.dist[0], op.dist[3]) == false) {
-
-    //op.ler_distancias();
-    //while (1) {
-    //  op.movimento(500);
-      //}
+    //while(1){
+      //Serial.println(sensores.passos);
     //}
+    while (op.troca_encoder() == false) {
+      //op.ler_distancias();
+      //sensores.passos = 0;
+      op.movimento(500);
+      Serial.println(sensores.passos_cm);
+    }
+
+    op.parar();
     //op.medir_passagens();
     //mapa.recebe_passagens_cor(op.passagens, op.cor());
     //mapa.orientacao(ori);

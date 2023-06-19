@@ -35,17 +35,22 @@ public:
   void begin() {
     Serial3.begin(1000000);
     interface.begin(baudrate);
+    bool error = false;
 
-    // Verifica se foi estabelecida a conexao
-    uint8_t status[4] = { motore1.init(),
-                          motore2.init(),
-                          motord1.init(),
-                          motord2.init() };
+    while (!error) {
+      // Verifica se foi estabelecida a conexao
+      
+      uint8_t status[4] = { motore1.init(),
+                            motore2.init(),
+                            motord1.init(),
+                            motord2.init() };
 
-    for (int i = 0; i < 4; i++) {
-      if (status[i] != DYN_STATUS_OK) {
-        Serial.print("Falha na conexao do motor: ");
-        Serial.println(status[i]);
+      for (int i = 0; i < 4; i++) {
+        if (status[i] != DYN_STATUS_OK) {
+          Serial.print("Falha na conexao do motor: ");
+          Serial.println(status[i]);
+          error = true;
+        }
       }
     }
 

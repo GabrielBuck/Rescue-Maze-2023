@@ -18,7 +18,7 @@ int potencias[4];  // Array to store the received numbers
 void setup() {
 
   Serial.begin(250000);
-  Serial2.begin(250000);
+  Serial2.begin(115200);
   Serial.println("Iniciei MEGA");
   motores.begin();
 }
@@ -49,6 +49,7 @@ void recebe_serial() {
     }
 
     if (buff_control < 30 && data_count == 4) {
+      Serial2.print('k');
       buff_control = 0;
       for (int i = 0; i < 4; i++){
 

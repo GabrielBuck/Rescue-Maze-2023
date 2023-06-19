@@ -32,6 +32,7 @@ public:
     last_x = x;
     last_y = y;
   }
+  
   /* Recebe a cor e as passagens do quadrado novo */
   void recebe_passagens_cor(bool aux[4], char color) {
     for (int i = 0; i < 4; i++) {
@@ -102,7 +103,7 @@ public:
   }
 
   /*Movimentas as cordenadas atuais do robo
-- 'F' move em 1 de seguindo a orientacao
+- 'F' move em 1 seguindo a orientacao
 - buraco move para o ultimo quadrado visitado
 - sequestro move para o ultimo checkpoint visitado*/
   void move_cordenada(bool buraco, bool sequestro) {
@@ -128,12 +129,12 @@ public:
 
     for (int i = 0; i < SIZE; i++) {
       for (int j = 0; j < SIZE; j++) {
-        // Print the value in hexadecimal format
+        // Imprime em hexadecimal 
         Serial.print("[");
         Serial.print(mapa[i][j], HEX);
         Serial.print("] ");
 
-        // Print the value in binary format
+        // Imp binary format
         Serial.print(String(mapa[i][j], BIN));
         Serial.print(" ");
       }

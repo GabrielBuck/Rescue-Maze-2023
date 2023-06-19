@@ -15,13 +15,13 @@ Motor motores;
 Sensores sensores;
 
 #define CIRCUNFERENCIA_RODA 20
-#define COMPRIMENTO_ROBO 12
+#define COMPRIMENTO_ROBO 8.5
 #define NUM_PASSOS 10
 
 
 /*! Constroi os PIDs*/
 //KP, KI, KD, Setpoint, windup, limite
-PID pidG(60.0, 0.1, 2.0, 0, 10, 50);  //Giroscopio
+PID pidG(60.0, 0.1, 2.0, 0, 10, 50);     //Giroscopio
 PID pidF(0.5, 0.2, 0.1, 100, 100, 100);  //Frontal
 
 
@@ -63,18 +63,20 @@ public:
     pidG.setSetpoint(setpoint);
   }
   /******************** ANGULO **********************/
-  void zerar_mpu(){
+  void zerar_mpu() {
     sensores.zerar_mpu();
   }
   /******************** DISTANCIAS **********************/
-  int dist[6];
+  float dist[6];
+  float correction_angle = 0;
+  float trajetoria = 30.0;
   bool passagens[4];
 
 
   /*! Lê as distancias dos 6 ultrassonicos*/
   void ler_distancias() {
     sensores.ler_dist();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 6; i++) {
       dist[i] = sensores.dist[i];
       Serial.print("Dist ");
       Serial.print(i);
@@ -96,23 +98,27 @@ public:
   float angulo() {
 
     ler_distancias();
-    int df = dist[1],
-        dt = dist[2],
-        et = dist[4],
-        ef = dist[5];
+    float df = dist[1],
+          dt = dist[2],
+          et = dist[4],
+          ef = dist[5];
     float angulo,
       cat_op,
       frente,
       tras;
 
+    bool lado = false;
+
     //Decidimos qual lado do robo e o mais proximo para medir o angulo
     if (ef + et <= df + dt) {
       frente = ef;
       tras = et;
+      lado = true;
     } else {
       frente = df;
       tras = dt;
     }
+
 
     if (frente > tras) {
       cat_op = frente - tras;
@@ -120,11 +126,13 @@ public:
       cat_op = tras - frente;
     }
 
-    angulo = asin(cat_op / COMPRIMENTO_ROBO) * 180 / M_PI;
+    angulo = atan(cat_op / COMPRIMENTO_ROBO) * (180.0 / M_PI);
 
     //Correcao dependendo da angulacao
-    if (df >= ef) {
-      angulo = angulo * -1;
+    if (frente < tras && lado == true) {
+      angulo = angulo * -1.0;
+    } else if (frente > tras && lado == false) {
+      angulo = angulo * -1.0;
     }
 
     Serial.print("Angulo: ");
@@ -196,13 +204,16 @@ public:
     sensores.zerar_encoder();
   }
 
+
+
   /*Um dos parametros da troca*/
   bool troca_encoder() {
-    if (sensores.ler_encoder() >= trajetoria) {  //Checa se foram passos suficientes
+
+    //Checa se foram passos suficientes
+    if (sensores.passos_cm >= trajetoria) {
       sensores.zerar_encoder();
       return true;
     } else {
-
       return false;
     }
   }
@@ -224,64 +235,77 @@ public:
   void correcao() {
     float ang = angulo();
     //Parte 1 alinha o robo com a parede
-    int aux[] = { -300, -300, -300, -300 };  // Inicia com valores para esquerda
+    int aux[] = { -200, -200, -200, -200 };  // Inicia com valores para esquerda
     sensores.zerar_mpu();
 
     //Ajuste para esquerda
-    if (ang <= -10.0) {
-      while (sensores.angulo_mpu() < 0) {
+    if (ang >= 2.0 && ang <= 20.0) {
+      while (sensores.angulo_mpu() < ang) {
         motores.potencia(aux);
       }
-    }  //Ajuste para direita
-    else if (ang >= 10.0) {
-      aux[0] = 300;
-      aux[1] = 300;
-      aux[2] = 300;
-      aux[3] = 300;
-      while (sensores.angulo_mpu() > 0) {
+    }
+    //Ajuste para direita
+    else if (ang <= -2.0 && ang >= -20.0) {
+      aux[0] = 200;
+      aux[1] = 200;
+      aux[2] = 200;
+      aux[3] = 200;
+      while (sensores.angulo_mpu() > ang) {
+        motores.potencia(aux);
+      }
+    }
+    //Caso de saída
+    else {
+    }
+    parar();
+    sensores.zerar_mpu();
+  }
+
+  /* */
+  void correcao_trajetoria() {
+    int aux[] = { 200, 200, 200, 200 };  // Inicia com valores para esquerda
+    
+    sensores.zerar_mpu();
+    //
+    if () {  //Próximo da esquerda
+      aux[0] = -200;
+      aux[1] = -200;
+      aux[2] = -200;
+      aux[3] = -200;
+
+      while (sensores.angulo_mpu() > correction_angle) {
+        motores.potencia(aux);
+      }
+    } else if (dist[5] < dist[1] && dist[5] != 0.0) {  //Próximo da direita
+      while (sensores.angulo_mpu() > correction_angle) {
         motores.potencia(aux);
       }
     }
     sensores.zerar_mpu();
   }
-
-  /*AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA */
-  void correcao_trajetoria() {
-    int aux[] = { 300, 300, 300, 300 };  // Inicia com valores para esquerda
-
-    //Escolhemos o lado mais proximo e verificamos se ele é coerente
-    if (dist[1] < dist[5] && dist[5] != -1) {  //Próximo da esquerda
-      aux[0] = -300;
-      aux[1] = -300;
-      aux[2] = -300;
-      aux[3] = -300;
-    }
-
-    if (dist[5] < dist[1] && dist[1] != -1) {  //Próximo da direita
-    }
-  }
-
-  int trajetoria = 30.0;
 
   /*Cálculo do comprimento da nova trajetória */
   void calcular_trajetoria() {
 
-    int cateto;
+    float cateto;
+    trajetoria = 30.0;
 
     //Escolhemos o lado mais proximo e verificamos se ele é coerente
-    if (dist[1] - dist[5] <= -5 && dist[5] != -1) {  //Próximo da esquerda
-      cateto = (15 - (dist[1] % 30));
+    if (dist[1] <= dist[5]) {  //Próximo da esquerda
+      cateto = (7 - fmod(dist[1], 30.0));
     }
 
-    else if (dist[5] < dist[1] <= -5 && dist[1] != -1) {  //Próximo da direita
-      cateto = (15 - (dist[5] % 30));
+    else if (dist[5] <= dist[1]) {  //Próximo da direita
+      cateto = (7 - fmod(dist[5], 30.0));
     }
     //Caso nao nescessite de correcao
     else {
+      return;
     }
 
     //Nova distancia a ser percorrida (Deve ser passada para a troca)
-    trajetoria = sqrt(pow(cateto, 2) + pow(30, 2));  // Calculate the hypotenuse
+    trajetoria = sqrt(pow(cateto, 2) + pow(30.0, 2));  // Calculate the hypotenuse
+    correction_angle = atan(cateto / 30.0) * (180.0 / M_PI);
   }
 };
 #endif

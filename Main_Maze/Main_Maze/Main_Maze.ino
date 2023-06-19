@@ -12,10 +12,12 @@
 #include "Estrategia.hpp"
 #include "Mapa.hpp"
 #include "Comunicacao.hpp"
+#include "Sensores_Novo.hpp"
 
 //Comunicacao com_;
 Mapa mapa_;
 Estrategia estrategia;
+//Sensores sensores;
 
 /*!<********** Declaração de todas variaveis ***********/
 
@@ -26,7 +28,9 @@ char comando_manual();
 void setup() {
 
   Serial.begin(250000);
-  Serial3.begin(250000);
+  Serial3.begin(115200);
+  pinMode(5, INPUT);
+  attachInterrupt(digitalPinToInterrupt(5), ler_encoder, CHANGE);
   Serial.println("Iniciei");
   /*!< Inicializacoes nescessarias >!*/
   estrategia.iniciar();
@@ -45,7 +49,6 @@ void loop() {
    if (comando == 'F') {
     estrategia.frente(ori, busca);
     Serial.println("Frente!!");
-
   }
   //Start
   else if (comando == 'S') {
@@ -80,4 +83,10 @@ char comando_manual() {
   input = Serial.read();
 
   return input;
+}
+
+
+void ler_encoder(){
+  sensores.passos++;
+  sensores.passos_cm = sensores.passos * 0.75100;
 }

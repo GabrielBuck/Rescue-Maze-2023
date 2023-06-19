@@ -12,15 +12,17 @@ class Ultrassonico {
 private:
 
   byte _trigger, _echo;
+  float _correcao = 0.0;
 
   /*!<Retorna intervalo de tempo entre as chamadas*/
   
 
 public:
 
-  Utrassonico(byte trigger, byte echo){
+  Ultrassonico(byte trigger, byte echo, float correcao = 0.0){
     _trigger = trigger;
     _echo = echo;
+    _correcao = correcao;
     pinMode(_trigger, OUTPUT);
     digitalWrite(_trigger, LOW);
     pinMode(_echo, INPUT);
@@ -30,17 +32,32 @@ public:
     unsigned long tempo;
 
     digitalWrite(_trigger, HIGH);
-    delayMicrosseconds(10);
-    digitalWite(_trigger, LOW);
+    delayMicroseconds(10);
+    digitalWrite(_trigger, LOW);
 
     tempo = micros();
     while(digitalRead(_echo) == 0 && (micros() - tempo) < 10000);
-    if((micros() - tempo) > 10000) return -1.0;
+    if((micros() - tempo) > 10000) return 0.0;
 
     tempo = micros();
-    while(digitalRead(_echo) == true && (micros() - tempo) < 10000);
-    
+    while(digitalRead(_echo) == true && (micros() - tempo) < 11764);
+    if( (micros() - tempo) > 11764) return 0.0;
 
+    float distancia = 0.017 * (float)(micros() - tempo);
+
+    distancia += _correcao;
+
+    return distancia;
+
+  }
+
+  float media(unsigned int num_mean){
+    float average = 0;
+    for(float x = 1 ; x <= num_mean ; x++){
+      average += (read() - average)/x;
+      delay(20);
+    }
+    return average;
   }
 
 
